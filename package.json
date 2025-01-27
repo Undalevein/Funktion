@@ -1,11 +1,33 @@
 {
-  "name": "placeholder",
+  "name": "funktion",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "A compiler for the Funktion programing language",
+  "main": "funktion.js",
+  "type": "module",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "test"
   },
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "scripts": {
+    "test": "c8 node --test test/**/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Undalevein/Funktion.git"
+  },
+  "keywords": [],
+  "author": "Wesley Ng, Reed Maniscalchi, Matthew Savitt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Undalevein/Funktion/issues"
+  },
+  "homepage": "https://github.com/undalevein/Funktion#readme",
+  "dependencies": {
+    "graph-stringify": "^1.1.0",
+    "ohm-js": "^17.1.0"
+  },
+  "devDependencies": {
+    "c8": "^10.1.3"
+  }
 }
