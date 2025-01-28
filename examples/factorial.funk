@@ -1,0 +1,5 @@
+`5..1` t1t
+
+factorial(x) = x * factorial(x).step()
+
+print(factorial:1)
