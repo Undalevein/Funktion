@@ -50,30 +50,31 @@ Each string is wrapped around double quotation marks.
 
 #### Arithmetic Operators
 
-| **Operator** |         **Description**          |
-| :----------: | :------------------------------: |
-|     `+`      |             Addition             |
-|     `-`      | Subtraction (Negation for Unary) |
-|     `*`      |          Multiplication          |
-|     `/`      |             Division             |
-|     `**`     |          Exponentiation          |
-|     `%`      |     Modulus (Not Remainder)      |
+| **Operator** |     **Description**     | **Example** |
+| :----------: | :---------------------: | :---------: |
+|     `+`      |        Addition         |   `4 + 5`   |
+|     `-`      |        Negation         |    `-9`     |
+|     `-`      |       Subtraction       |   `7 - 2`   |
+|     `*`      |     Multiplication      |   `4 * 8`   |
+|     `/`      |        Division         |  `12 / 3`   |
+|     `**`     |     Exponentiation      |  `2 ** 9`   |
+|     `%`      | Modulus (Not Remainder) |  `11 % 2`   |
 
 #### Bitwise Operators
 
-| **Operator** | **Description** |
-| :----------: | :-------------: |
-|     `~`      |   Bitwise Not   |
-|     `&`      |   Bitwise And   |
-|     `\|`     |   Bitwise Or    |
-|     `<<`     | Left Bit Shift  |
-|     `>>`     | Right Bit Shift |
+| **Operator** | **Description** | **Example** |
+| :----------: | :-------------: | :---------: |
+|     `~`      |   Bitwise Not   |    `~9`     |
+|     `&`      |   Bitwise And   |  `7 & 3 `   |
+|     `\|`     |   Bitwise Or    |  `2 \| 8`   |
+|     `<<`     | Left Bit Shift  |  `7 << 2`   |
+|     `>>`     | Right Bit Shift |  `64 >> 4`  |
 
 #### Miscellaneous Operators
 
-| **Operator** |   **Description**    |
-| :----------: | :------------------: |
-|     `+`      | String Concatentaion |
+| **Operator** |   **Description**    |   **Example**   |
+| :----------: | :------------------: | :-------------: |
+|     `+`      | String Concatentaion | `"Hi" + " Joe"` |
 
 ### Ranges
 
@@ -121,15 +122,41 @@ Syntaxwise, it is similar to the examples above.
 
 #### Calling Functions
 
-- `f(x).step(3)`
+- `f(x).step(3)` - calls the function 3 times.
+- `print(f:2)` - prints the output of the function until 2.
 
 ### Keywords
 
 - `print` - a print statement that prints the item into the console.
   - `print("Bonjour!!!")`
 
-## Examples
+## Code Snippets
+
+### Hello World - (hello.funk)
+
+Program below prints "Hello, World!"
 
 ```
-?? Insert Hello World Example Here
+// This example prints the simple program "Hello, World!"
+print("Hello, World!")
+```
+
+```ps1
+Hello, World!
+```
+
+### Factorial - (factorial.funk)
+
+Program below prints the factorial of 5, which will output 120. This is created using a method that outputs the answer using a recursive algorithm.
+
+```
+`5..1` t1t
+
+factorial(x) = x * factorial(x).step()
+
+print(factorial:1)
+```
+
+```ps1
+120
 ```
