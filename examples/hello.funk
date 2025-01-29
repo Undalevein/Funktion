@@ -1,2 +1,2 @@
-
+// This example prints the simple program "Hello, World!"
 print("Hello, World!")
