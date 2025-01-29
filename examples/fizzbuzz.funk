@@ -1,3 +1,7 @@
 `15..1` t1t
-fizzbuzz(x) ? %15 == 0 => print("fizzbuzz") ? %3 == 0 => print("fizz") ? %5 == 0 => print("buzz") : print(x)
-fizzbuzz(x).step(-1)
+
+fizzbuzz(x) =
+    ? x % 15 == 0 => print("fizzbuzz"), fizzbuzz.step()
+    ? x % 3 == 0 => print("fizz"), fizzbuzz.step()
+    ? x % 5 == 0 => print("buzz"), fizzbuzz.step()
+    : print(x), fizzbuzz.step()
