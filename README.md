@@ -54,7 +54,7 @@ Each string is wrapped in double quotation marks.
 #### Arithmetic Operators
 
 | **Operator** | **Description**         | **Example** |
-|--------------|-------------------------|-------------|
+| ------------ | ----------------------- | ----------- |
 | `+`          | Addition                | `4 + 5`     |
 | `-`          | Negation                | `-9`        |
 | `-`          | Subtraction             | `7 - 2`     |
@@ -66,7 +66,7 @@ Each string is wrapped in double quotation marks.
 #### Bitwise Operators
 
 | **Operator** | **Description** | **Example** |
-|--------------|-----------------|-------------|
+| ------------ | --------------- | ----------- |
 | `~`          | Bitwise Not     | `~9`        |
 | `&`          | Bitwise And     | `7 & 3`     |
 | `\|`         | Bitwise Or      | `2 \| 8`    |
@@ -75,15 +75,15 @@ Each string is wrapped in double quotation marks.
 
 #### Miscellaneous Operators
 
-| **Operator** | **Description**       | **Example**       |
-|--------------|-----------------------|-------------------|
-| `+`          | String Concatenation  | `"Hi" + " Joe"`   |
+| **Operator** | **Description**      | **Example**     |
+| ------------ | -------------------- | --------------- |
+| `+`          | String Concatenation | `"Hi" + " Joe"` |
 
 ---
 
 ### Ranges
 
-Ranges are the building blocks of Funktion programming. They allow programmers to perform the same function multiple times. By default, every range iterates with a step value of 1 unless the user overrides it by specifying an interval length. Intervals can also start at a value and generate unbounded by an end value, ending their generation under a given function print call 
+Ranges are the building blocks of Funktion programming. They allow programmers to perform the same function multiple times. By default, every range iterates with a step value of 1 unless the user overrides it by specifying an interval length. Intervals can also start at a value and generate unbounded by an end value, ending their generation under a given function print call
 
 #### General Notation
 
@@ -107,7 +107,7 @@ These types of ranges will not stop until some goal condition is met. For exampl
 - `` `'a'..'e'` `` → `a b c d e`
 - `` `'y'..'t'` `` → `y x w v u t`
 - `` `'a'..'h' t2t` `` → `a c e g`
-- `` `'Y'..'c'` `` → `Y Z [ \ ] ^ _ \` a b c`
+- `` `'Y'..'c'` `` → `` Y Z [ \ ] ^ _ ` a b c ``
 
 #### Range Scoping
 
@@ -125,7 +125,7 @@ Syntax-wise, it is similar to the examples above.
 - `` [x]:`.2..1.0` `` (Assume global scope interval is 0.2)
 - `` [y]:`0..5 t1t` ``
 
-If a local scope exceeds the bounds of a given global scope, the program will let the function continue to generate until the program's global scope is reached or passed. 
+If a local scope exceeds the bounds of a given global scope, the program will let the function continue to generate until the program's global scope is reached or passed.
 
 ---
 
@@ -160,6 +160,7 @@ This will step through both `G` and `f` by `x`'s step value, while also making t
 In Funktion, the **chain of questioning** allows you to perform a series of conditional checks using consecutive `?` symbols. Each `?` represents a case to be checked, and the `:` symbol represents the "else" condition.
 
 #### Syntax:
+
 ```funktion
 ? condition1 => action1
 ? condition2 => action2
@@ -169,18 +170,18 @@ In Funktion, the **chain of questioning** allows you to perform a series of cond
 
 ---
 
-
 ### Consecutive Action Operator
 
+### Consecutive Action Operator (`,`)
 
-### Consecutive Action Operator (` , `)
-
-The **consecutive action operator (` , `)** allows you to chain multiple actions together on a single line. Actions are evaluated from left to right.
+The **consecutive action operator (`,`)** allows you to chain multiple actions together on a single line. Actions are evaluated from left to right.
 
 #### Syntax:
+
 ```funktion
 action1, action2, action3
 ```
+
 ---
 
 ### Keywords
@@ -259,6 +260,7 @@ print(f:5)
 In this example, `f(x)` generates a sequence of numbers from 1 to 5. When combined with `G(x)`, which multiplies the sequence by a user-provided value, the `.step(2)` operation ensures that both functions are evaluated together, sharing their mutations for the specified number of steps. The final output reflects the combined effect of both functions over the sequence.
 
 ### Example: Chain of Questioning, Consecutive Actions
+
 ```funktion
 `15..1` t1t
 
