@@ -265,10 +265,10 @@ In this example, `f(x)` generates a sequence of numbers from 1 to 5. When combin
 `15..1` t1t
 
 fizzbuzz(x) =
-    ? x % 15 == 0 => print("fizzbuzz"), fizzbuzz.step()
-    ? x % 3 == 0 => print("fizz"), fizzbuzz.step()
-    ? x % 5 == 0 => print("buzz"), fizzbuzz.step()
-    : print(x), fizzbuzz.step()
+    ? x % 15 == 0 => print("fizzbuzz"), fizzbuzz(x).step()
+    ? x % 3 == 0 => print("fizz"), fizzbuzz(x).step()
+    ? x % 5 == 0 => print("buzz"), fizzbuzz(x).step()
+    : print(x), fizzbuzz(x).step()
 ```
 
 **Expected Output:**
