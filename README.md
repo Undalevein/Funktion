@@ -234,7 +234,7 @@ print(factorial:1)
 
 ---
 
-### Example: Combining Functions
+### Example: Combining Functions and Casting User Input
 
 ```funktion
 `1..5` t1t
