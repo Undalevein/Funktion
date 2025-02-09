@@ -1,6 +1,10 @@
+<p align="center">
 <img src="https://raw.githubusercontent.com/Undalevein/Funktion/c9d5854adf0e02323d5054f57243cf65ab835b70/docs/funktion_logo.png" width="64" height="64">
+</p>
 
-# Funktion
+<p align="center">
+**Funktion**
+</p>
 
 ## Da Backstory
 
@@ -234,7 +238,7 @@ print(factorial:1)
 
 ---
 
-### Example: Combining Functions
+### Example: Combining Functions and Casting User Input
 
 ```funktion
 `1..5` t1t
@@ -265,10 +269,10 @@ In this example, `f(x)` generates a sequence of numbers from 1 to 5. When combin
 `15..1` t1t
 
 fizzbuzz(x) =
-    ? x % 15 == 0 => print("fizzbuzz"), fizzbuzz.step()
-    ? x % 3 == 0 => print("fizz"), fizzbuzz.step()
-    ? x % 5 == 0 => print("buzz"), fizzbuzz.step()
-    : print(x), fizzbuzz.step()
+    ? x % 15 == 0 => print("fizzbuzz"), fizzbuzz(x).step()
+    ? x % 3 == 0 => print("fizz"), fizzbuzz(x).step()
+    ? x % 5 == 0 => print("buzz"), fizzbuzz(x).step()
+    : print(x), fizzbuzz(x).step()
 ```
 
 **Expected Output:**
