@@ -1,69 +1,23 @@
 Funktion {
-  Program           = Statement+
-
-  Statement         = RangeDeclaration
-                    | FunctionDef
-                    | PrintStmt
-                    | ExprStmt
-
-  RangeDeclaration  = GlobalRange | LocalRange
-  GlobalRange       = rangeLiteral
-  LocalRange        = id ":" rangeLiteral
-  rangeLiteral      = "`" rangeContent "`"
-  rangeContent      = start=numberOrChar ".." end=numberOrChar stepModifier?
-                    | start=numberOrChar ".." stepModifier?
-                    | ".." end=numberOrChar stepModifier?
-  stepModifier      = "t" step=number "t"
-  numberOrChar      = number | charLiteral
-
-  FunctionDef       = id "(" params=ParamList? ")" "=" body=Expression
-  ParamList         = id ("," id)*
-
-  ExprStmt          = Expression
-  Expression        = ChainExpr
-  ChainExpr         = head=ActionExpr tail=("," ActionExpr)*
-  ActionExpr        = ConditionalExpr | LogicalOrExpr
-
-  ConditionalExpr   = "?" condition=Expression "=>" action=ActionExpr
-                    branches=("?" condition=Expression "=>" action=ActionExpr)*
-                    ":" default=ActionExpr
-
-  LogicalOrExpr     = LogicalAndExpr ("||" LogicalAndExpr)*
-  LogicalAndExpr    = EqualityExpr ("&&" EqualityExpr)*
-  EqualityExpr      = RelationalExpr (("==" | "!=") RelationalExpr)*
-  RelationalExpr    = AddSubExpr (("<" | ">" | "<=" | ">=") AddSubExpr)*
-
-  AddSubExpr        = MulDivExpr (("+" | "-") MulDivExpr)*
-  MulDivExpr        = ExpExpr (("*" | "/" | "%") ExpExpr)*
-  ExpExpr           = UnaryExpr ("**" UnaryExpr)*
-  UnaryExpr         = ("-" | "~") UnaryExpr | PrimaryExpr
-
-  PrimaryExpr       = number
-                    | string
-                    | charLiteral
-                    | id
-                    | "(" Expression ")"
-                    | FunctionCall
-                    | MemberExpr
-
-  FunctionCall      = callee=id "(" args=ArgList? ")"
-  MemberExpr        = obj=PrimaryExpr "." method=id "(" args=ArgList? ")"
-  ArgList           = Expression ("," Expression)*
-
-  charLiteral       = "'" (escape | ~['\\] any)* "'"
-  string            = "\"" (escape | ~["\\] any)* "\""
-  escape            = "\\" ("n" | "t" | "b" | "\\" | "\"" | "'")
-
-  PrintStmt         = "print" "(" Expression ")"
-
-  Comment           = "//" (~"\n" any)*
-
-  id                = ~keyword letter (letter | digit | "_")*
-  number            = token( '-'? (digit+ ('.' digit*)? | '.' digit+) )
-
-  print             = "print" ~alnum
-  keyword           = print
-
-  space            += Comment | whitespace
-  whitespace        = " " | "\t" | "\n" | "\r"
+  Program     = (globalRange)? (Statement+)?
+    
+  Statement   = "+"            --dump
+    
+  globalRange = range (space+ timeStep)?
+    
+  range       = numRange 
+        |       charRange
+  numRange    = "`" num ".." (num)? "`"
+              | "`" (num)? ".." num "`"
+  charRange   = "`" char ".." (char)? "`"
+  timeStep    = "t" num "t"
+    
+  keyword     = "print"
+  num         = digit+ ("." digit+)?
+  char        = "'"any"'"
+  id          = ~keyword letter idchar*
+  idchar      = letter | digit | "_"
+  space      += "//" (~"\n" any)*                                        -- comment
+  specialchar = "\\" | "\'" | "\""
+  whitespace  = " " | "\n" | "\t" | "\r"
 }
