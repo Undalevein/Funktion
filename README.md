@@ -223,7 +223,7 @@ Program below prints the factorial of 5, which will output `120` after iterating
 
 factorial(x) = x * factorial(x).step()
 
-print(factorial:1)
+print(factorial(x):1)
 ```
 
 **Output:**
@@ -248,7 +248,7 @@ f(x).step(2)
 G(x) = number(input("Give me a value and I will multiply that sequence with that value."))
 
 (f(x) * G(x)).step(2)
-print(f:5)
+print(f(x):5)
 ```
 
 **Expected Output:**
