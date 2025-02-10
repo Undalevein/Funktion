@@ -2,4 +2,4 @@
 
 factorial(x) = x * factorial(x).step()
 
-print(factorial:1)
+print(factorial(x):1)
