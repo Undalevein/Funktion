@@ -1,23 +1,45 @@
 Funktion {
-  Program     = (globalRange)? (Statement+)?
-    
-  Statement   = "+"            --dump
-    
-  globalRange = range (space+ timeStep)?
-    
-  range       = numRange 
-        |       charRange
-  numRange    = "`" num ".." (num)? "`"
-              | "`" (num)? ".." num "`"
-  charRange   = "`" char ".." (char)? "`"
-  timeStep    = "t" num "t"
-    
-  keyword     = "print"
-  num         = digit+ ("." digit+)?
-  char        = "'"any"'"
-  id          = ~keyword letter idchar*
-  idchar      = letter | digit | "_"
-  space      += "//" (~"\n" any)*                                        -- comment
-  specialchar = "\\" | "\'" | "\""
-  whitespace  = " " | "\n" | "\t" | "\r"
+  Program      = (globalRange)? (Statement | FuncDef)+
+
+  FuncDef      = id "(" id ")" "=" Expr
+  FuncCall     = id "(" id ")"
+  
+  Expr         = Action ("," Action)*
+  Action       = BitwiseExpr
+  BitwiseExpr  = ShiftExpr (("&" | "|") ShiftExpr)*
+  ShiftExpr    = AddExpr (("<<" | ">>") AddExpr)*
+  AddExpr      = MulExpr (("+" | "-") MulExpr)*
+  MulExpr      = Primary (("**" | "*" | "/" | "%") Primary)*
+  Primary      = num 
+               | id 
+               | string 
+               | char 
+               | FuncCall 
+
+  Statement    = printStmt 
+  					   | timeCall
+               | "+"
+  printStmt    = "print" "(" (string | timeCall) ")"
+  timeCall     = id ":" num
+
+  globalRange  = range (whitespace+ timeStep)?
+  localRange   = "[" id "]:" range (whitespace+ timeStep)?
+  range        = numRange | charRange
+  numRange     = "`" num ".." (num)? "`"
+               | "`" (num)? ".." num "`"
+  charRange    = "`" char ".." (char)? "`"
+               | "`" (char)? ".." (char) "`"
+  timeStep     = "t" num "t"
+  
+  string       = "\"" (~"\"" any)* "\""
+  char         = "'" any "'"
+  
+  id           = ~keyword letter idchar*
+  idchar       = letter | digit | "_"
+  num          = digit+ ("." digit+)?
+  keyword      = "print" | "step"
+
+  space       += "//" (~"\n" any)*  -- comment
+  specialchar  = "\\" | "\'" | "\""
+  whitespace   = " " | "\n" | "\t" | "\r"
 }
