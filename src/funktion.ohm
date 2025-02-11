@@ -21,7 +21,7 @@ Funktion {
                | stepCall
                | "+"
   printStmt    = "print" "(" (string | timeCall) ")"
-  timeCall     = id ":" num
+  timeCall     = id "(" id "):" num
   stepCall     = id "(" id ").step(" num ")"
 
   globalRange  = range (whitespace+ timeStep)?
