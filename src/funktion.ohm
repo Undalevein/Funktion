@@ -15,14 +15,17 @@ Funktion {
                | string 
                | char 
                | FuncCall 
+               | Statement
 
   Statement    = printStmt 
   					   | timeCall
                | stepCall
+               | inputCall
                | "+"
   printStmt    = "print" "(" (string | timeCall) ")"
   timeCall     = id "(" id "):" num
   stepCall     = id "(" id ").step(" num ")"
+  inputCall    = "input" "(" string ")"
 
   globalRange  = range (whitespace+ timeStep)?
   localRange   = "[" id "]:" range (whitespace+ timeStep)?
@@ -39,7 +42,7 @@ Funktion {
   id           = ~keyword letter idchar*
   idchar       = letter | digit | "_"
   num          = digit+ ("." digit+)?
-  keyword      = "print" | "step"
+  keyword      = "print" | "step" | "input"
 
   space       += "//" (~"\n" any)*  -- comment
   specialchar  = "\\" | "\'" | "\""
