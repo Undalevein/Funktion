@@ -4,36 +4,32 @@ Funktion {
   FuncDef      = id "(" id ")" "=" Expr
   FuncCall     = id "(" id ")"
   
-  Expr         = BitwiseExpr ("," BitwiseExpr)*
-  BitwiseExpr  = BitwiseExpr ("&" | "|") ShiftExpr			--binary
-  						| ShiftExpr
-  ShiftExpr    = ShiftExpr ("<<" | ">>") AddExpr			--binary
-  					| AddExpr
-  AddExpr      = AddExpr ("+" | "-") MulExpr				--binary
-  					| Factor
-  MulExpr      = MulExpr ("*" | "/" | "%") Factor		--binary
-  					| Factor
-  Factor 		= Primary "**" Factor							 --exponentiation
-  					| "-" Factor											--negation
-                    | "~" Factor											--bitwisenegation
-                    | Primary
-  
+  Expr         = Action ("," Action)*
+  Action       = BitwiseExpr
+  BitwiseExpr  = ShiftExpr (("&" | "|") ShiftExpr)*
+  ShiftExpr    = AddExpr (("<<" | ">>") AddExpr)*
+  AddExpr      = MulExpr (("+" | "-") MulExpr)*
+  MulExpr      = Primary (("**" | "*" | "/" | "%") Primary)*
   Primary      = num 
                | id 
-               | stringliteral 
-               | charliteral 
+               | string 
+               | char 
                | FuncCall 
                | Statement
+               | FuncCall
+               | id 
+               | stringliteral 
+               | charliteral
 
   Statement    = printStmt 
   					   | timeCall
                | stepCall
                | inputCall
                | "+"
-  printStmt    = "print" "(" (stringliteral | timeCall) ")"
+  printStmt    = "print" "(" (string | timeCall) ")"
   timeCall     = id "(" id "):" num
   stepCall     = id "(" id ").step(" num ")"
-  inputCall    = "input" "(" stringliteral ")"
+  inputCall    = "input" "(" string ")"
 
   globalRange  = range (whitespace+ timeStep)?
   localRange   = "[" id "]:" range (whitespace+ timeStep)?
@@ -53,7 +49,6 @@ Funktion {
   keyword      = "print" | "step" | "input"
 
   space       += "//" (~"\n" any)*  -- comment
-  char =  (~"\\" ~"\'" any) | "\\\\" | "\\\'" | whitespace
-  stringchar =  (~"\\" ~"\"" ~whitespace any) | "\\\\" | "\\\"" | whitespace
-  whitespace   = " " | "\\n" | "\\t" | "\\r"
+  specialchar  = "\\" | "\'" | "\""
+  whitespace   = " " | "\n" | "\t" | "\r"
 }
