@@ -4,16 +4,24 @@ Funktion {
   FuncDef      = id "(" id ")" "=" Expr
   FuncCall     = id "(" id ")"
   
-  Expr         = Action ("," Action)*
-  Action       = BitwiseExpr
-  BitwiseExpr  = ShiftExpr (("&" | "|") ShiftExpr)*
-  ShiftExpr    = AddExpr (("<<" | ">>") AddExpr)*
-  AddExpr      = MulExpr (("+" | "-") MulExpr)*
-  MulExpr      = Primary (("**" | "*" | "/" | "%") Primary)*
+  Expr         = BitwiseExpr ("," BitwiseExpr)*
+  BitwiseExpr  = BitwiseExpr ("&" | "|") ShiftExpr			--binary
+  						| ShiftExpr
+  ShiftExpr    = ShiftExpr ("<<" | ">>") AddExpr			--binary
+  					| AddExpr
+  AddExpr      = AddExpr ("+" | "-") MulExpr				--binary
+  					| Factor
+  MulExpr      = MulExpr ("*" | "/" | "%") Factor		--binary
+  					| Factor
+  Factor 		= Primary "**" Factor							 --exponentiation
+  					| "-" Factor											--negation
+                    | "~" Factor											--bitwisenegation
+                    | Primary
+  
   Primary      = num 
                | id 
-               | string 
-               | char 
+               | stringliteral 
+               | charliteral 
                | FuncCall 
                | Statement
 
@@ -22,29 +30,30 @@ Funktion {
                | stepCall
                | inputCall
                | "+"
-  printStmt    = "print" "(" (string | timeCall) ")"
+  printStmt    = "print" "(" (stringliteral | timeCall) ")"
   timeCall     = id "(" id "):" num
   stepCall     = id "(" id ").step(" num ")"
-  inputCall    = "input" "(" string ")"
+  inputCall    = "input" "(" stringliteral ")"
 
   globalRange  = range (whitespace+ timeStep)?
   localRange   = "[" id "]:" range (whitespace+ timeStep)?
   range        = numRange | charRange
   numRange     = "`" num ".." (num)? "`"
                | "`" (num)? ".." num "`"
-  charRange    = "`" char ".." (char)? "`"
-               | "`" (char)? ".." (char) "`"
+  charRange    = "`" charliteral ".." (charliteral)? "`"
+               | "`" (charliteral)? ".." (charliteral) "`"
   timeStep     = "t" num "t"
   
-  string       = "\"" (~"\"" any)* "\""
-  char         = "'" any "'"
-  
+  stringliteral       = "\"" stringchar* "\""
+  charliteral         = "\'" char "\'"
+ 
   id           = ~keyword letter idchar*
   idchar       = letter | digit | "_"
   num          = digit+ ("." digit+)?
   keyword      = "print" | "step" | "input"
 
   space       += "//" (~"\n" any)*  -- comment
-  specialchar  = "\\" | "\'" | "\""
-  whitespace   = " " | "\n" | "\t" | "\r"
+  char =  (~"\\" ~"\'" any) | "\\\\" | "\\\'" | whitespace
+  stringchar =  (~"\\" ~"\"" ~whitespace any) | "\\\\" | "\\\"" | whitespace
+  whitespace   = " " | "\\n" | "\\t" | "\\r"
 }
