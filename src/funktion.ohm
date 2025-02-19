@@ -4,7 +4,7 @@ Funktion {
   FuncDef      = id "(" id ")" "=" Expr
   FuncCall     = id "(" id ")"
   
-  Expr         = CondExpr ("," CondExpr)*
+  Expr         = CondExpr (("," | ":") CondExpr)*
   CondExpr     = "?" CondExpr "==" BitwiseExpr "=>" BitwiseExpr --binary
                | BitwiseExpr
   BitwiseExpr  = BitwiseExpr ("&" | "|") ShiftExpr			        --binary
