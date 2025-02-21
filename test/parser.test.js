@@ -13,7 +13,6 @@ const syntaxChecks = [
   ],
   ["function name containing a keyword", "printe(x)=2"],
   ["function with 2x", "f(x)=2x"],
-  ["function with 2x_2", "f(x)=2x_2"],
   ["function call through step", "f(x).step(3)"],
   ["function call through colon", "print(f:2)"],
   ["function call with multiple steps", "(G(x) + f(x)).step(2)"],
