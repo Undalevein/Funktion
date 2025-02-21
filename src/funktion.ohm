@@ -1,9 +1,8 @@
 Funktion {
-  Program      = (globalRange)? (Statement | FuncDef)+
+  Program      = (GlobalRange)? (Statement | FuncDef)+
 
   FuncDef      = id "(" id ")" "=" Expr
-  FuncCall     = id "(" id  ")"
-  
+  FuncCall		= id "(" id ")"
   Expr         = CondExpr (("," | ":") CondExpr)*
   CondExpr     = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") BitwiseExpr "=>" BitwiseExpr --binary
                | BitwiseExpr
@@ -19,45 +18,49 @@ Funktion {
   Factor        = Primary "**" Factor                            --exponentiation
                | "-" Factor                                      --negation
                | "~" Factor                                      --bitwisenegation
-               | stepCall
-               | "(" CondExpr ")"							--parens
                | Primary
-  Primary      = num 
-               | Statement
+  Primary      = num
                | FuncCall
-               | id 
+               | StepCall
+               | input
+               | "(" BitwiseExpr ")"							--parens
+               | id
                | stringliteral 
                | charliteral
 
-  Statement    = PrintStmt 
-               | timeCall
-               | stepCall
-               | inputCall
-  PrintStmt    = "print" "(" (CondExpr | timeCall | id) ")"
+  Statement    = PrintStmt
+               | StepCall
+               | InputStmt
+  PrintStmt    = "print" "(" (TimeCall | BitwiseExpr) ")"
+  TimeCall     = id ":" num
+  StepCall     = CondExpr ".step(" num? ")"
+  InputStmt    = "input" "(" stringliteral ")"
 
-  timeCall     = id "(" id "):" num
-  stepCall     = id "(" id ").step(" num? ")"
-  inputCall    = "input" "(" stringliteral ")"
-
-  globalRange  = range (whitespace+ timeStep)?
-  localRange   = "[" id "]:" range (whitespace+ timeStep)?
-  range        = numRange | charRange
-  numRange     = "`" num ".." (num)? "`"
-               | "`" (num)? ".." num "`"
-  charRange    = "`" charliteral ".." (charliteral)? "`"
-               | "`" (charliteral)? ".." (charliteral) "`"
-  timeStep     = "t" "-"? num "t"
+  GlobalRange  = range timestep?
+  LocalRange   = "[" id "]:" range  timestep?
   
+  numrange     = "`" num ".." (num)? "`"
+               | "`" (num)? ".." num "`"
+  charrange    = "`" charliteral ".." (charliteral)? "`"
+               | "`" (charliteral)? ".." (charliteral) "`"
+  range        = numrange | charrange
+  
+  timestep     = "t" "-"? num "t"
+ 
+  num          = digit+ ("." digit+)?
   stringliteral       = "\"" stringchar* "\""
+  stringchar =  (~"\\" ~"\"" any) | "\\\\" | "\\\"" | escapechar
   charliteral         = "\'" char "\'"
+  char =  (~"\\" ~"\'" any) | "\\\\" | "\\\'" | escapechar
+  escapechar   = " " | "\\n" | "\\t" | "\\r" | "\\b"
  
   id           = ~keyword letter idchar*
-  idchar       = letter | digit |"_"
-  num          = digit+ ("." digit+)?
-  keyword      = ("print" | "step" | "input") ~idchar
+  idchar       = letter |"_"
+  
+  input = "input" ~idchar
+  print = "print" ~idchar
+  step = "step" ~idchar
+  keyword      = input | print | step
 
   space       += "//" (~"\n" any)*                               -- comment
-  char =  (~"\\" ~"\'" any) | "\\\\" | "\\\'" | whitespace
-  stringchar =  (~"\\" ~"\"" any) | "\\\\" | "\\\"" | whitespace
-  whitespace   = " " | "\\n" | "\\t" | "\\r" | "\\b"
 }

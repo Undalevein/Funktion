@@ -9,14 +9,14 @@ const syntaxChecks = [
   ["assign constant to a function, with spaces", "f(x) =   2"],
   [
     "declare a function with valid identifier characters",
-    "ffhquEOF2324_FHJIDP354__687igo(huerhgW)=2",
+    "ffhquEOF_FHJIDP__igo(huerhgW)=2",
   ],
   ["function name containing a keyword", "printe(x)=2"],
   ["function with 2x", "f(x)=2x"],
   ["function with 2x_2", "f(x)=2x_2"],
   ["function call through step", "f(x).step(3)"],
-  //   ["function call through colon", "print(f:2)"],
-  //   ["function call with multiple steps", "(G(x) + f(x)).step(2)"],
+  ["function call through colon", "print(f:2)"],
+  ["function call with multiple steps", "(G(x) + f(x)).step(2)"],
   ["print statement", 'print("Hello, World!")'],
   ["print statement with special characters", 'print("\\n\\t\\r\\b\\\\\\"")'],
   ["mixing arithmetic operators", "print(7 * 2 / 1 ** -5 + 2 % 2)"],
@@ -35,7 +35,7 @@ const syntaxChecks = [
   ["character range but reverse", "`'y'..'t'`\nprint(x)"],
   ["character range with time step", "`'a'..'h'` t2t\nprint(x)"],
   ["character range through ascii", "`'Y'..'c'`\nprint(x)"],
-  ["chain of questioning", "f(x) = ? 0 == 0 => print(x) : print(x)"],
+  ["chain of questioning", "f(x) = ? 0 == 0 => 2 : 1"],
 ];
 
 // Programs with syntax errors that the parser will detect
@@ -45,14 +45,26 @@ const syntaxErrors = [
   ["using a keyword as a variable identifier", "f(print)=3", /Line 1, col 3:/],
   ["cart before the horse", "f(x) = x2", /Line 1, col 7:/],
   ["missing function body", "f(x)=", /Line 1, col 5:/],
-  ["variable called for final print condition generator, but never initialized", "print(f:2)", /Line 1, col 7:/],
-  ["Setting a function to a print statement", "f(x)=print(x)", /Line 1, col 5:/],
+  [
+    "variable called for final print condition generator, but never initialized",
+    "print(f:2)",
+    /Line 1, col 7:/,
+  ],
+  [
+    "Setting a function to a print statement",
+    "f(x)=print(x)",
+    /Line 1, col 5:/,
+  ],
   ["missing closing parenthesis", 'print("Hello, World!"', /Line 1, col 21:/],
   ["missing closing parenthesis", "print(2 + 1 * 3", /Line 1, col 17:/],
   ["missing closing parenthesis", "print(2 + (1 * 3)", /Line 1, col 18:/],
   ["missing closing parenthesis", "print(2 + (1 * (3)", /Line 1, col 19:/],
   ["timeCall within function definition", "f(x)=g(h:5)", /Line 1, col 5:/],
-  ["Using input as a function with arithmetic operation", "f(x)=input() + 2", /Line 1, col 5:/],
+  [
+    "Using input as a function with arithmetic operation",
+    "f(x)=input() + 2",
+    /Line 1, col 5:/,
+  ],
 ];
 
 describe("The parser", () => {
