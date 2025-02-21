@@ -4,17 +4,24 @@ Funktion {
   FuncDef      = id "(" id ")" "=" Expr
   FuncCall     = id "(" id ")"
   
-  Expr         = Action ("," Action)*
-  Action       = BitwiseExpr
-  BitwiseExpr  = ShiftExpr (("&" | "|") ShiftExpr)*
-  ShiftExpr    = AddExpr (("<<" | ">>") AddExpr)*
-  AddExpr      = MulExpr (("+" | "-") MulExpr)*
-  MulExpr      = Primary (("**" | "*" | "/" | "%") Primary)*
+  Expr         = CondExpr (("," | ":") CondExpr)*
+  CondExpr     = "?" CondExpr "==" BitwiseExpr "=>" BitwiseExpr --binary
+               | BitwiseExpr
+  BitwiseExpr  = BitwiseExpr ("&" | "|") ShiftExpr			        --binary
+  						 | ShiftExpr
+  ShiftExpr    = ShiftExpr ("<<" | ">>") AddExpr			          --binary
+  					   | AddExpr
+  AddExpr      = AddExpr ("+" | "-") MulExpr				            --binary
+  					   | MulExpr
+  MulExpr      = MulExpr ("*" | "/" | "%") Factor		            --binary
+  					   | Factor
+  Factor 		   = Primary "**" Factor							              --exponentiation
+  					   | "-" Factor											                --negation
+               | "~" Factor											                --bitwisenegation
+               | stepCall
+               | Primary
+  
   Primary      = num 
-               | id 
-               | string 
-               | char 
-               | FuncCall 
                | Statement
                | FuncCall
                | id 
@@ -26,10 +33,10 @@ Funktion {
                | stepCall
                | inputCall
                | "+"
-  printStmt    = "print" "(" (string | timeCall) ")"
+  printStmt    = "print" "(" (stringliteral | timeCall | id) ")"
   timeCall     = id "(" id "):" num
-  stepCall     = id "(" id ").step(" num ")"
-  inputCall    = "input" "(" string ")"
+  stepCall     = id "(" id ").step(" num? ")"
+  inputCall    = "input" "(" stringliteral ")"
 
   globalRange  = range (whitespace+ timeStep)?
   localRange   = "[" id "]:" range (whitespace+ timeStep)?
@@ -48,7 +55,8 @@ Funktion {
   num          = digit+ ("." digit+)?
   keyword      = "print" | "step" | "input"
 
-  space       += "//" (~"\n" any)*  -- comment
-  specialchar  = "\\" | "\'" | "\""
-  whitespace   = " " | "\n" | "\t" | "\r"
+  space       += "//" (~"\n" any)*                               -- comment
+  char =  (~"\\" ~"\'" any) | "\\\\" | "\\\'" | whitespace
+  stringchar =  (~"\\" ~"\"" any) | "\\\\" | "\\\"" | whitespace
+  whitespace   = " " | "\\n" | "\\t" | "\\r"
 }
