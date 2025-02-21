@@ -51,6 +51,8 @@ const syntaxErrors = [
   ["missing closing parenthesis", "print(2 + 1 * 3", /Line 1, col 17:/],
   ["missing closing parenthesis", "print(2 + (1 * 3)", /Line 1, col 18:/],
   ["missing closing parenthesis", "print(2 + (1 * (3)", /Line 1, col 19:/],
+  ["timeCall within function definition", "f(x)=g(h:5)", /Line 1, col 5:/],
+  ["Using input as a function with arithmetic operation", "f(x)=input() + 2", /Line 1, col 5:/],
 ];
 
 describe("The parser", () => {
