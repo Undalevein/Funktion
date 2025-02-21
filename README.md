@@ -39,6 +39,7 @@ Each character is wrapped in single quotation marks.
 - `'a'`
 - `'\n'` - Line Feed (New Line)
 - `'\t'` - Horizontal Tab
+- `'\r'` - Carriage Return
 - `'\b'` - Backspace
 - `'\\'` - Backslash Character (`\`)
 - `'\"'` - Double Quotation Character (`"`)
@@ -76,6 +77,17 @@ Each string is wrapped in double quotation marks.
 | `\|`         | Bitwise Or      | `2 \| 8`    |
 | `<<`         | Left Bit Shift  | `7 << 2`    |
 | `>>`         | Right Bit Shift | `64 >> 4`   |
+
+#### Relational Operators
+
+| **Operator** | **Description**        | **Example** |
+| ------------ | ---------------------- | ----------- |
+| `==`         | Equals                 | `9 == 9`    |
+| `!=`         | Not Equals             | `9 != 9`    |
+| `<`          | Less Than              | `9 < 9`     |
+| `<=`         | Less Than or Equals    | `9 <= 9`    |
+| `>`          | Greater Than           | `9 > 9`     |
+| `>=`         | Greater Than or Equals | `9 >= 9`    |
 
 #### Miscellaneous Operators
 

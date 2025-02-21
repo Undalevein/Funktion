@@ -5,22 +5,23 @@ Funktion {
   FuncCall     = id "(" id ")"
   
   Expr         = CondExpr (("," | ":") CondExpr)*
-  CondExpr     = "?" CondExpr "==" BitwiseExpr "=>" BitwiseExpr --binary
+  CondExpr     = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") BitwiseExpr "=>" BitwiseExpr --binary
                | BitwiseExpr
-  BitwiseExpr  = BitwiseExpr ("&" | "|") ShiftExpr			        --binary
-  						 | ShiftExpr
-  ShiftExpr    = ShiftExpr ("<<" | ">>") AddExpr			          --binary
-  					   | AddExpr
-  AddExpr      = AddExpr ("+" | "-") MulExpr				            --binary
-  					   | MulExpr
-  MulExpr      = MulExpr ("*" | "/" | "%") Factor		            --binary
-  					   | Factor
-  Factor 		   = Primary "**" Factor							              --exponentiation
-  					   | "-" Factor											                --negation
-               | "~" Factor											                --bitwisenegation
+  BitwiseExpr  = BitwiseExpr ("&" | "|") ShiftExpr              --binary
+               | ShiftExpr
+  ShiftExpr    = ShiftExpr ("<<" | ">>") AddExpr                --binary
+               | AddExpr
+  AddExpr      = AddExpr ("+" | "-") MulExpr                    --binary
+               | MulExpr
+  MulExpr      = MulExpr ("*" | "/" | "%") Factor               --binary 
+              | MulExpr idchar                                  --mul
+               | Factor
+  Factor        = Primary "**" Factor                            --exponentiation
+               | "-" Factor                                      --negation
+               | "~" Factor                                      --bitwisenegation
                | stepCall
+               | "(" CondExpr ")"							--parens
                | Primary
-  
   Primary      = num 
                | Statement
                | FuncCall
@@ -28,12 +29,12 @@ Funktion {
                | stringliteral 
                | charliteral
 
-  Statement    = printStmt 
-  					   | timeCall
+  Statement    = PrintStmt 
+               | timeCall
                | stepCall
                | inputCall
-               | "+"
-  printStmt    = "print" "(" (stringliteral | timeCall | id) ")"
+  PrintStmt    = "print" "(" (CondExpr | timeCall | id) ")"
+
   timeCall     = id "(" id "):" num
   stepCall     = id "(" id ").step(" num? ")"
   inputCall    = "input" "(" stringliteral ")"
@@ -51,12 +52,12 @@ Funktion {
   charliteral         = "\'" char "\'"
  
   id           = ~keyword letter idchar*
-  idchar       = letter | digit | "_"
+  idchar       = letter | digit |"_"
   num          = digit+ ("." digit+)?
-  keyword      = "print" | "step" | "input"
+  keyword      = ("print" | "step" | "input") ~idchar
 
   space       += "//" (~"\n" any)*                               -- comment
   char =  (~"\\" ~"\'" any) | "\\\\" | "\\\'" | whitespace
   stringchar =  (~"\\" ~"\"" any) | "\\\\" | "\\\"" | whitespace
-  whitespace   = " " | "\\n" | "\\t" | "\\r"
+  whitespace   = " " | "\\n" | "\\t" | "\\r" | "\\b"
 }
