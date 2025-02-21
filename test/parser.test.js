@@ -43,6 +43,14 @@ const syntaxErrors = [
   ["non-letter in an identifier", "ab😭c()=2;", /Line 1, col 3:/],
   ["using a keyword as a function identifier", "print(x)=2", /Line 1, col 9:/],
   ["using a keyword as a variable identifier", "f(print)=3", /Line 1, col 3:/],
+  ["cart before the horse", "f(x) = x2", /Line 1, col 7:/],
+  ["missing function body", "f(x)=", /Line 1, col 5:/],
+  ["variable called for final print condition generator, but never initialized", "print(f:2)", /Line 1, col 7:/],
+  ["Setting a function to a print statement", "f(x)=print(x)", /Line 1, col 5:/],
+  ["missing closing parenthesis", 'print("Hello, World!"', /Line 1, col 21:/],
+  ["missing closing parenthesis", "print(2 + 1 * 3", /Line 1, col 17:/],
+  ["missing closing parenthesis", "print(2 + (1 * 3)", /Line 1, col 18:/],
+  ["missing closing parenthesis", "print(2 + (1 * (3)", /Line 1, col 19:/],
 ];
 
 describe("The parser", () => {
