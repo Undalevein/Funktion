@@ -2,7 +2,7 @@ Funktion {
   Program      = (globalRange)? (Statement | FuncDef)+
 
   FuncDef      = id "(" id ")" "=" Expr
-  FuncCall     = id "(" id ")"
+  FuncCall     = id "(" id  ")"
   
   Expr         = CondExpr (("," | ":") CondExpr)*
   CondExpr     = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") BitwiseExpr "=>" BitwiseExpr --binary
@@ -46,7 +46,7 @@ Funktion {
                | "`" (num)? ".." num "`"
   charRange    = "`" charliteral ".." (charliteral)? "`"
                | "`" (charliteral)? ".." (charliteral) "`"
-  timeStep     = "t" num "t"
+  timeStep     = "t" "-"? num "t"
   
   stringliteral       = "\"" stringchar* "\""
   charliteral         = "\'" char "\'"
