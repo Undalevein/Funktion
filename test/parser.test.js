@@ -9,7 +9,7 @@ const syntaxChecks = [
   ["assign constant to a function, with spaces", "f(x) =   2"],
   [
     "declare a function with valid identifier characters",
-    "ffhquEOFFHJIDPigo(huerhgW)=2",
+    "ffhquEOF2324_FHJIDP354__687igo(huerhgW)=2",
   ],
   ["function name containing a keyword", "printe(x)=2"],
   ["function with 2x", "f(x)=2x"],
