@@ -35,8 +35,14 @@ const syntaxChecks = [
   ["character range with time step", "`'a'..'h'` t2t\nprint(x)"],
   ["character range through ascii", "`'Y'..'c'`\nprint(x)"],
   ["chain of questioning", "f(x) = ? 0 == 0 => 2 : 1"],
-  ["chain of questioning with multiple questions", "f(x) = ? 0 == 0 => 2 : ? 1 == 1 => 3 : 4"]
-  ["multiple statements on the same line, separate by commas", "f(x)=2, g(x)=3, h(x)=4"],
+  [
+    "chain of questioning with multiple questions",
+    "f(x) = ? 0 == 0 => 2 : ? 1 == 1 => 3 : 4",
+  ],
+  [
+    "multiple statements on the same line, separate by commas",
+    "f(x)=2; g(x)=3; h(x)=4",
+  ],
 ];
 
 // Programs with syntax errors that the parser will detect

@@ -1,7 +1,7 @@
 Funktion {
   Program      = (GlobalRange)? (Statement | FuncDef)+
 
-  FuncDef      = id "(" id ")" "=" Expr
+  FuncDef      = id "(" id ")" "=" Expr (";" id "(" id ")" "=" Expr)*
   FuncCall		= id "(" id ")"
   Expr         = CondExpr (("," | ":") CondExpr)*
   CondExpr     = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") BitwiseExpr "=>" BitwiseExpr --binary
@@ -20,8 +20,8 @@ Funktion {
                | "~" Factor                                      --bitwisenegation
                | Primary
   Primary      = num
-               | FuncCall
                | StepCall
+               | FuncCall
                | input
                | "(" BitwiseExpr ")"							--parens
                | id
