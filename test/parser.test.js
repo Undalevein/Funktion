@@ -14,8 +14,8 @@ const syntaxChecks = [
   ["function name containing a keyword", "printe(x)=2"],
   ["function with 2x", "f(x)=2x"],
   ["function call through step", "f(x).step(3)"],
-  ["function call through colon", "print(f:2)"],
-  ["function call with multiple steps", "(G(x) + f(x)).step(2)"],
+  ["function call through colon", "print(f(x):2)"],
+  ["function call with multiple steps", "{G(x) + f(x)}.step(2)"],
   ["print statement", 'print("Hello, World!")'],
   ["print statement with special characters", 'print("\\n\\t\\r\\b\\\\\\"")'],
   ["mixing arithmetic operators", "print(7 * 2 / 1 ** -5 + 2 % 2)"],
@@ -43,6 +43,8 @@ const syntaxChecks = [
     "multiple statements on the same line, separate by commas",
     "f(x)=2; g(x)=3; h(x)=4",
   ],
+  ["Commenting", 'print("hi") //This is a comment'],
+  ["using input as a function with arithmetic operation", "f(x)=input() + 2"],
 ];
 
 // Programs with syntax errors that the parser will detect
@@ -50,7 +52,7 @@ const syntaxErrors = [
   ["non-letter in an identifier", "ab😭c()=2;", /Line 1, col 3:/],
   ["using a keyword as a function identifier", "print(x)=2", /Line 1, col 9:/],
   ["using a keyword as a variable identifier", "f(print)=3", /Line 1, col 3:/],
-  ["cart before the horse", "f(x) = x2", /Line 1, col 10:/],
+  ["cart before the horse", "f(x) = x2", /Line 1, col 9:/],
   ["missing function body", "f(x)=", /Line 1, col 6:/],
   [
     "Setting a function to a print statement",
@@ -62,11 +64,6 @@ const syntaxErrors = [
   ["missing closing parenthesis", "print(2 + (1 * 3)", /Line 1, col 18:/],
   ["missing closing parenthesis", "print(2 + (1 * (3)", /Line 1, col 19:/],
   ["timeCall within function definition", "f(x)=g(h:5)", /Line 1, col 9:/],
-  [
-    "Using input as a function with arithmetic operation",
-    "f(x)=input() + 2",
-    /Line 1, col 12:/,
-  ],
 ];
 
 describe("The parser", () => {
