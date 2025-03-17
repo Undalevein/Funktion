@@ -1,66 +1,71 @@
 Funktion {
-  Program      = (GlobalRange)? (Statement | FuncDef)+
+  Program        = (GlobalRange "\n")? listOf<(Item), "\n">
+  Item           = Statement
+  						   | FuncDef
+                 | ""
 
-  FuncDef      = id "(" id ")" "=" Expr (";" id "(" id ")" "=" Expr)*
-  FuncCall		= id "(" id ")"
-  Expr         = CondExpr (("," | ":") CondExpr)*
-  CondExpr     = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") BitwiseExpr "=>" BitwiseExpr --binary
-               | BitwiseExpr
-  BitwiseExpr  = BitwiseExpr ("&" | "|") ShiftExpr              --binary
-               | ShiftExpr
-  ShiftExpr    = ShiftExpr ("<<" | ">>") AddExpr                --binary
-               | AddExpr
-  AddExpr      = AddExpr ("+" | "-") MulExpr                    --binary
-               | MulExpr
-  MulExpr      = MulExpr ("*" | "/" | "%") Factor               --binary 
-              | MulExpr idchar                                  --mul
-               | Factor
-  Factor        = Primary "**" Factor                            --exponentiation
-               | "-" Factor                                      --negation
-               | "~" Factor                                      --bitwisenegation
-               | Primary
-  Primary      = num
-               | StepCall
-               | FuncCall
-               | input
-               | "(" BitwiseExpr ")"							--parens
-               | id
-               | stringliteral 
-               | charliteral
+  FuncDef        = id "(" id ")" "=" "\n"? Expr (";" (FuncDef | Expr))*
+  FuncCall		   = id "(" id ")"
+  Expr           = CondExpr (("," | ":") "\n"? CondExpr)*
+  CondExpr       = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") BitwiseExpr "=>" BitwiseExpr --binary
+                 | BitwiseExpr
+  BitwiseExpr    = BitwiseExpr ("&" | "|") ShiftExpr              --binary
+                 | ShiftExpr
+  ShiftExpr      = ShiftExpr ("<<" | ">>") AddExpr                --binary
+                 | AddExpr
+  AddExpr        = AddExpr ("+" | "-") MulExpr                    --binary
+                 | MulExpr
+  MulExpr        = MulExpr ("*" | "/" | "%") Factor               --binary 
+                 | MulExpr idchar                                  --mul
+                 | Factor
+  Factor         = Primary "**" Factor                            --exponentiation
+                 | "-" Factor                                      --negation
+                 | "~" Factor                                      --bitwisenegation
+                 | Primary
+  Primary        = num
+                 | StepCall
+                 | FuncCall
+                 | InputStmt
+                 | "(" BitwiseExpr ")"							--parens
+                 | id
+                 | stringliteral 
+                 | charliteral
 
-  Statement    = PrintStmt
-               | StepCall
-               | InputStmt
-  PrintStmt    = "print" "(" (TimeCall | BitwiseExpr) ")"
-  TimeCall     = id ":" num
-  StepCall     = CondExpr ".step(" num? ")"
-  InputStmt    = "input" "(" stringliteral ")"
+  Statement      = PrintStmt
+                 | StepCall
+                 | InputStmt
+  PrintStmt      = "print" "(" (TimeCall | BitwiseExpr) ")"
+  TimeCall       = FuncCall ":" num
+  StepCall       =  (FuncCall | FunctionGroup) ".step(" num? ")"
+  InputStmt      = "input" "(" stringliteral? ")"
 
-  GlobalRange  = range timestep?
-  LocalRange   = "[" id "]:" range  timestep?
+  GlobalRange    = range timestep?
+  LocalRange     = "[" id "]:" range  timestep?
+  FunctionGroup = "{" Expr "}"
   
-  numrange     = "`" num ".." (num)? "`"
-               | "`" (num)? ".." num "`"
-  charrange    = "`" charliteral ".." (charliteral)? "`"
-               | "`" (charliteral)? ".." (charliteral) "`"
-  range        = numrange | charrange
+  numrange       = "`" num ".." (num)? "`"
+                 | "`" (num)? ".." num "`"
+  charrange      = "`" charliteral ".." (charliteral)? "`"
+                 | "`" (charliteral)? ".." (charliteral) "`"
+  range          = numrange | charrange
   
-  timestep     = "t" "-"? num "t"
+  timestep       = "t" "-"? num "t"
  
-  num          = digit+ ("." digit+)?
-  stringliteral       = "\"" stringchar* "\""
-  stringchar =  (~"\\" ~"\"" any) | "\\\\" | "\\\"" | escapechar
-  charliteral         = "\'" char "\'"
-  char =  (~"\\" ~"\'" any) | "\\\\" | "\\\'" | escapechar
-  escapechar   = " " | "\\n" | "\\t" | "\\r" | "\\b"
+  num            = digit+ ("." digit+)?
+  stringliteral  = "\"" stringchar* "\""
+  stringchar     = (~"\\" ~"\"" any) | "\\\\" | "\\\"" | escapechar
+  charliteral    = "\'" char "\'"
+  char           = (~"\\" ~"\'" any) | "\\\\" | "\\\'" | escapechar
+  escapechar     = " " | "\\n" | "\\t" | "\\r" | "\\b"
  
-  id           = ~keyword letter idchar*
-  idchar       = letter |"_"
+  id             = ~keyword letter idchar*
+  idchar         = letter |"_"
   
-  input = "input" ~idchar
-  print = "print" ~idchar
-  step = "step" ~idchar
-  keyword      = input | print | step
+  input          = "input" ~idchar
+  print          = "print" ~idchar
+  step           = "step" ~idchar
+  keyword        = input | print | step
 
-  space       += "//" (~"\n" any)*                               -- comment
+  space         := ~"\n" "\x00".."\x20" 
+                 | "//" (~"\n" any)*                               -- comment
 }
