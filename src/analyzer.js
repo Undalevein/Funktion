@@ -50,7 +50,7 @@ export default function analyze(match) {
 
   const builder = match.matcher.grammar.createSemantics().addOperation("rep", {
     Program(globalRange, statements) {
-      return core.program(globalRange?.rep(), statements.children.map(s => s.rep()));
+      return core.program(globalRange?.rep(), statements.children.map(statement => statement.rep()));
     },
 
     FuncDef(id, param, _eq, body) {
@@ -64,6 +64,10 @@ export default function analyze(match) {
       const func = context.lookup(id.sourceString);
       mustHaveBeenFound(func, id.sourceString, { at: id });
       return core.funcCall(id.sourceString, arg.rep());
+    },
+
+    FunctionGroup(_open, expr, _close) {
+      return core.functionGroup(expr.rep());
     },
 
     Expr(condExpr, rest) {
@@ -123,11 +127,11 @@ export default function analyze(match) {
     },
 
     InputStmt(_input, _open, prompt, _close) {
-      return core.inputStmt(prompt.rep());
+      return core.inputStmt(prompt?.rep());
     },
 
-    TimeCall(id, _colon, timeValue) {
-      return core.timeCall(id.sourceString, id.rep(), timeValue.rep());
+    TimeCall(funcCall, _colon, timeValue) {
+      return core.timeCall(funcCall.rep(), timeValue.rep());
     },
 
     GlobalRange(range, timestep) {

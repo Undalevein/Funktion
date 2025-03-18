@@ -10,6 +10,10 @@ export function funcCall(name, arg) {
   return { kind: "FuncCall", name, arg };
 }
 
+export function functionGroup(expr) {
+  return { kind: "FunctionGroup", expr };
+}
+
 export function expr(condExpr, rest = []) {
   return { kind: "Expr", condExpr, rest };
 }
@@ -54,8 +58,8 @@ export function inputStmt(prompt) {
   return { kind: "InputStmt", prompt };
 }
 
-export function timeCall(name, arg, timeValue) {
-  return { kind: "TimeCall", name, arg, timeValue };
+export function timeCall(funcCall, timeValue) {
+  return { kind: "TimeCall", funcCall, timeValue };
 }
 
 export function globalRange(range, timestep = null) {
