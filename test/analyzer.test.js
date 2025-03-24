@@ -41,6 +41,11 @@ const semanticErrors = [
     "input()",
     /Input must be inside function declaration/,
   ],
+  [
+    "dividing a string by an integer",
+    'print("Hi" / 2)',
+    /Input must be inside function declaration/,
+  ],
 ];
 
 describe("The analyzer", () => {
