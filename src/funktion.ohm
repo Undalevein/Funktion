@@ -36,7 +36,7 @@ Funktion {
                  | InputStmt
   PrintStmt      = "print" "(" (TimeCall | BitwiseExpr) ")"
   TimeCall       = FuncCall ":" num
-  StepCall       =  (FuncCall | FunctionGroup) ".step(" num? ")"
+  StepCall       = (FuncCall | FunctionGroup) ".step(" num? ")"
   InputStmt      = "input" "(" stringliteral? ")"
 
   GlobalRange    = range timestep?
