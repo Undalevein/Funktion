@@ -1,1 +1,417 @@
-<h1>Hello!</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funktion - A Functional, Generational Programming Language</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #166088;
+            --accent: #4fc3f7;
+            --background: #f8f9fa;
+            --text: #333;
+            --code-bg: #f5f5f5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--background);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        h2 {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        h3 {
+            color: var(--secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        h3::before {
+            content: "▶";
+            font-size: 0.8em;
+            margin-right: 10px;
+            transition: transform 0.2s;
+        }
+
+        h3.expanded::before {
+            transform: rotate(90deg);
+        }
+
+        .feature {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .example {
+            display: none;
+            margin-top: 15px;
+            background-color: var(--code-bg);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            overflow-x: auto;
+        }
+
+        pre {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background-color: var(--code-bg);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .output {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-left: 4px solid #81c784;
+            margin-top: 10px;
+        }
+
+        .output-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://raw.githubusercontent.com/Undalevein/Funktion/c9d5854adf0e02323d5054f57243cf65ab835b70/docs/funktion_logo.png" alt="Funktion Logo" class="logo">
+        <h1>Funktion</h1>
+    </header>
+
+    <section class="feature">
+        <h2>About Funktion</h2>
+        <p>Funktion is a functional, generational, concise programming language that leverages aspects of parametric math notation, perfect for people who love math. Functions are defined as generators that are stepped through according to a global or local time step. The time step varies over an interval from a starting to ending point, allowing several independently-running functions to interact at different points in the program.</p>
+    </section>
+
+    <section class="feature">
+        <h2>Language Features</h2>
+
+        <div class="feature">
+            <h3>Comments</h3>
+            <div class="example">
+                <pre><code>// This is a comment! Oooga Booga
+print("Hello, World!")</code></pre>
+            </div>
+        </div>
+
+        <div class="feature">
+            <h3>Types</h3>
+            <div class="example">
+                <h4>Numbers</h4>
+                <ul>
+                    <li><code>42</code></li>
+                    <li><code>5.2</code></li>
+                </ul>
+
+                <h4>Characters</h4>
+                <p>Each character is wrapped in single quotation marks.</p>
+                <ul>
+                    <li><code>'a'</code></li>
+                    <li><code>'\n'</code> - Line Feed (New Line)</li>
+                    <li><code>'\t'</code> - Horizontal Tab</li>
+                    <li><code>'\r'</code> - Carriage Return</li>
+                    <li><code>'\b'</code> - Backspace</li>
+                    <li><code>'\\'</code> - Backslash Character (<code>\</code>)</li>
+                    <li><code>'\"'</code> - Double Quotation Character (<code>"</code>)</li>
+                </ul>
+
+                <h4>Strings</h4>
+                <p>Each string is wrapped in double quotation marks.</p>
+                <ul>
+                    <li><code>"Hello!"</code></li>
+                    <li><code>"24t4t"</code></li>
+                    <li><code>"Bob says \"Hello\" to you!"</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="feature">
+            <h3>Operators</h3>
+            <div class="example">
+                <h4>Arithmetic Operators</h4>
+                <table>
+                    <tr><th>Operator</th><th>Description</th><th>Example</th></tr>
+                    <tr><td><code>+</code></td><td>Addition</td><td><code>4 + 5</code></td></tr>
+                    <tr><td><code>-</code></td><td>Negation</td><td><code>-9</code></td></tr>
+                    <tr><td><code>-</code></td><td>Subtraction</td><td><code>7 - 2</code></td></tr>
+                    <tr><td><code>*</code></td><td>Multiplication</td><td><code>4 * 8</code></td></tr>
+                    <tr><td><code>/</code></td><td>Division</td><td><code>12 / 3</code></td></tr>
+                    <tr><td><code>**</code></td><td>Exponentiation</td><td><code>2 ** 9</code></td></tr>
+                    <tr><td><code>%</code></td><td>Modulus (Not Remainder)</td><td><code>11 % 2</code></td></tr>
+                </table>
+
+                <h4>Bitwise Operators</h4>
+                <table>
+                    <tr><th>Operator</th><th>Description</th><th>Example</th></tr>
+                    <tr><td><code>~</code></td><td>Bitwise Not</td><td><code>~9</code></td></tr>
+                    <tr><td><code>&</code></td><td>Bitwise And</td><td><code>7 & 3</code></td></tr>
+                    <tr><td><code>|</code></td><td>Bitwise Or</td><td><code>2 | 8</code></td></tr>
+                    <tr><td><code><<</code></td><td>Left Bit Shift</td><td><code>7 << 2</code></td></tr>
+                    <tr><td><code>>></code></td><td>Right Bit Shift</td><td><code>64 >> 4</code></td></tr>
+                </table>
+
+                <h4>Relational Operators</h4>
+                <table>
+                    <tr><th>Operator</th><th>Description</th><th>Example</th></tr>
+                    <tr><td><code>==</code></td><td>Equals</td><td><code>9 == 9</code></td></tr>
+                    <tr><td><code>!=</code></td><td>Not Equals</td><td><code>9 != 9</code></td></tr>
+                    <tr><td><code><</code></td><td>Less Than</td><td><code>9 < 9</code></td></tr>
+                    <tr><td><code><=</code></td><td>Less Than or Equals</td><td><code>9 <= 9</code></td></tr>
+                    <tr><td><code>></code></td><td>Greater Than</td><td><code>9 > 9</code></td></tr>
+                    <tr><td><code>>=</code></td><td>Greater Than or Equals</td><td><code>9 >= 9</code></td></tr>
+                </table>
+
+                <h4>Miscellaneous Operators</h4>
+                <table>
+                    <tr><th>Operator</th><th>Description</th><th>Example</th></tr>
+                    <tr><td><code>+</code></td><td>String Concatenation</td><td><code>"Hi" + " Joe"</code></td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="feature">
+            <h3>Ranges</h3>
+            <div class="example">
+                <p>Ranges are the building blocks of Funktion programming. They allow programmers to perform the same function multiple times.</p>
+                
+                <h4>Numerical Ranges</h4>
+                <ul>
+                    <li><code>`0..10`</code> → <code>0 1 2 3 4 5 6 7 8 9 10</code></li>
+                    <li><code>`0..10 t1t`</code> → <code>0 1 2 3 4 5 6 7 8 9 10</code></li>
+                    <li><code>`10..0`</code> → <code>10 9 8 7 6 5 4 3 2 1 0</code></li>
+                    <li><code>`0..10 t-1t`</code> → <code>0</code></li>
+                    <li><code>`0..5 t0.2t`</code> → <code>0 0.2 0.4 0.6 ... 4.6 4.8 5</code></li>
+                </ul>
+
+                <h4>Infinite Numerical Ranges</h4>
+                <ul>
+                    <li><code>`0..`</code> → <code>0 1 2 3 4 5 6 7 8 9 10 11 12 13...</code></li>
+                    <li><code>`..0`</code> → <code>0 -1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -12 -13...</code></li>
+                </ul>
+
+                <h4>Character Ranges</h4>
+                <ul>
+                    <li><code>`'a'..'e'`</code> → <code>a b c d e</code></li>
+                    <li><code>`'y'..'t'`</code> → <code>y x w v u t</code></li>
+                    <li><code>`'a'..'h' t2t`</code> → <code>a c e g</code></li>
+                    <li><code>`'Y'..'c'`</code> → <code>Y Z [ \ ] ^ _ ` a b c</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="feature">
+            <h3>Functions</h3>
+            <div class="example">
+                <h4>Declaring Functions</h4>
+                <ul>
+                    <li><code>f(x) = 2x</code></li>
+                    <li><code>g(x) = x</code></li>
+                </ul>
+
+                <h4>Calling Functions</h4>
+                <ul>
+                    <li><code>f(x).step(3)</code> - Calls the function 3 times.</li>
+                    <li><code>print(f:2)</code> - Prints the output of the function until 2.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="feature">
+            <h3>Chain of Questioning</h3>
+            <div class="example">
+                <p>The <strong>chain of questioning</strong> allows you to perform a series of conditional checks using consecutive <code>?</code> symbols. Each <code>?</code> represents a case to be checked, and the <code>:</code> symbol represents the "else" condition.</p>
+                
+                <h4>Syntax:</h4>
+                <pre><code>? condition1 => action1
+? condition2 => action2
+? condition3 => action3
+: defaultAction</code></pre>
+            </div>
+        </div>
+
+        <div class="feature">
+            <h3>Consecutive Action Operator</h3>
+            <div class="example">
+                <p>The <strong>consecutive action operator (<code>,</code>)</strong> allows you to chain multiple actions together on a single line. Actions are evaluated from left to right.</p>
+                
+                <h4>Syntax:</h4>
+                <pre><code>action1, action2, action3</code></pre>
+            </div>
+        </div>
+
+        <div class="feature">
+            <h3>Keywords</h3>
+            <div class="example">
+                <ul>
+                    <li><code>print</code> - A print statement that prints the item into the console.
+                        <ul><li><code>print("Bonjour!!!")</code></li></ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="feature">
+        <h2>Code Examples</h2>
+
+        <div class="feature">
+            <h3>Hello World - (hello.funk)</h3>
+            <div class="example">
+                <p>Program below prints <code>"Hello, World!"</code>.</p>
+                <pre><code>// This example prints the simple program "Hello, World!"
+print("Hello, World!")</code></pre>
+                <div class="output">
+                    <div class="output-title">Output:</div>
+                    <pre>Hello, World!</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature">
+            <h3>Factorial - (factorial.funk)</h3>
+            <div class="example">
+                <p>Program below prints the factorial of 5, which will output <code>120</code> after iterating through each product. This is created using a method that outputs the answer using a recursive algorithm.</p>
+                <pre><code>`5..1` t1t
+
+factorial(x) = x * factorial(x).step()
+
+print(factorial(x):1)</code></pre>
+                <div class="output">
+                    <div class="output-title">Output:</div>
+                    <pre>5
+20
+60
+120
+120</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature">
+            <h3>Combining Functions and Casting User Input</h3>
+            <div class="example">
+                <pre><code>`1..5` t1t
+
+f(x) = x
+f(x).step(2)
+G(x) = number(input("Give me a value and I will multiply that sequence with that value."))
+
+(f(x) * G(x)).step(2)
+print(f(x):5)</code></pre>
+                <div class="output">
+                    <div class="output-title">Expected Output:</div>
+                    <pre>1
+2
+3
+20
+25</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature">
+            <h3>Chain of Questioning, Consecutive Actions</h3>
+            <div class="example">
+                <pre><code>`15..1` t1t
+
+fizzbuzz(x) =
+    ? x % 15 == 0 => print("fizzbuzz"), fizzbuzz(x).step()
+    ? x % 3 == 0 => print("fizz"), fizzbuzz(x).step()
+    ? x % 5 == 0 => print("buzz"), fizzbuzz(x).step()
+    : print(x), fizzbuzz(x).step()</code></pre>
+                <div class="output">
+                    <div class="output-title">Expected Output:</div>
+                    <pre>fizzbuzz
+14
+13
+fizz
+11
+buzz
+fizz
+8
+7
+fizz
+buzz
+4
+fizz
+2
+1</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const headers = document.querySelectorAll('h3');
+            
+            headers.forEach(header => {
+                header.addEventListener('click', function() {
+                    this.classList.toggle('expanded');
+                    const example = this.nextElementSibling;
+                    example.style.display = example.style.display === 'block' ? 'none' : 'block';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
