@@ -1,5 +1,7 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/Undalevein/Funktion/c9d5854adf0e02323d5054f57243cf65ab835b70/docs/funktion_logo.png" width="64" height="64">
+  <a href="https://undalevein.github.io/Funktion/">
+    <img src="https://raw.githubusercontent.com/Undalevein/Funktion/c9d5854adf0e02323d5054f57243cf65ab835b70/docs/funktion_logo.png" width="64" height="64">
+  </a>
 </p>
 
 <p align="center">
