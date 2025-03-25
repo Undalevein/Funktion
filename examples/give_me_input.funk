@@ -6,4 +6,4 @@ G(x) = input("Give me a value and I will multiply that sequence with that value.
 
 h(x) = f(x) * G(x)
 h(x).step(2)
-print(f:5)
+print(f(x):5)

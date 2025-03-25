@@ -1,7 +1,12 @@
 import * as core from "./core.js";
 
 class Context {
-  constructor({ parent = null, locals = new Map(), inLoop = false, function: f = null }) {
+  constructor({
+    parent = null,
+    locals = new Map(),
+    inLoop = false,
+    function: f = null,
+  }) {
     Object.assign(this, { parent, locals, inLoop, function: f });
   }
 
@@ -14,7 +19,9 @@ class Context {
   }
 
   static root() {
-    return new Context({ locals: new Map(Object.entries(core.standardLibrary)) });
+    return new Context({
+      locals: new Map(Object.entries(core.standardLibrary)),
+    });
   }
 
   newChildContext(props) {
@@ -50,7 +57,10 @@ export default function analyze(match) {
 
   const builder = match.matcher.grammar.createSemantics().addOperation("rep", {
     Program(globalRange, statements) {
-      return core.program(globalRange?.rep(), statements.children.map(statement => statement.rep()));
+      return core.program(
+        globalRange?.rep(),
+        statements.children.map((statement) => statement.rep())
+      );
     },
 
     FuncDef(id, param, _eq, body) {
@@ -71,7 +81,10 @@ export default function analyze(match) {
     },
 
     Expr(condExpr, rest) {
-      return core.expr(condExpr.rep(), rest.children.map(r => r.rep()));
+      return core.expr(
+        condExpr.rep(),
+        rest.children.map((r) => r.rep())
+      );
     },
 
     CondExpr(condition, thenBranch, elseBranch) {
@@ -150,7 +163,7 @@ export default function analyze(match) {
       return core.charRange(start.rep(), end?.rep());
     },
 
-    Timestep(_t, value, _t) {
+    Timestep(_tstart, value, _tend) {
       return core.timestep(value.rep());
     },
 

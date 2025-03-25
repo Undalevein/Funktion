@@ -42,8 +42,23 @@ const semanticErrors = [
     /Input must be inside function declaration/,
   ],
   [
+    "adding a string by an integer",
+    'print(f(x)="hi"+1)',
+    /Input must be inside function declaration/,
+  ],
+  [
+    "subtracting a string by an integer",
+    'print(f(x)="hi"-1)',
+    /Input must be inside function declaration/,
+  ],
+  [
+    "multiplying a string by an integer",
+    'print(f(x)="hi"*1)',
+    /Input must be inside function declaration/,
+  ],
+  [
     "dividing a string by an integer",
-    'print("Hi" / 2)',
+    'print(f(x)="hi"/1)',
     /Input must be inside function declaration/,
   ],
 ];

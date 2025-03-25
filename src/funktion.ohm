@@ -1,8 +1,5 @@
 Funktion {
-  Program        = (GlobalRange "\n")? listOf<(Item), "\n">
-  Item           = Statement
-  						   | FuncDef
-                 | ""
+  Program        = (GlobalRange "\n")? ListOf<((Statement | FuncDef)?), "\n">
 
   FuncDef        = id "(" id ")" "=" "\n"? Expr (";" (FuncDef | Expr))*
   FuncCall		   = id "(" id ")"
@@ -36,7 +33,7 @@ Funktion {
                  | InputStmt
   PrintStmt      = "print" "(" (TimeCall | BitwiseExpr) ")"
   TimeCall       = FuncCall ":" num
-  StepCall       = (FuncCall | FunctionGroup) ".step(" num? ")"
+  StepCall       =  (FuncCall | FunctionGroup) ".step(" num? ")"
   InputStmt      = "input" "(" stringliteral? ")"
 
   GlobalRange    = range timestep?
