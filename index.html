@@ -1,1 +1,604 @@
-<h1>Hello!</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funktion - A Functional, Generational Programming Language</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #166088;
+            --accent: #4fc3f7;
+            --background: #f8f9fa;
+            --text: #333;
+            --code-bg: #f5f5f5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--background);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-container {
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.05);
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        h2 {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        h3 {
+            color: var(--secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        h3::before {
+            content: "▶";
+            font-size: 0.8em;
+            margin-right: 10px;
+            transition: transform 0.2s;
+        }
+
+        h3.expanded::before {
+            transform: rotate(90deg);
+        }
+
+        .feature {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .backstory {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-style: italic;
+            border-left: 4px solid var(--primary);
+        }
+
+        .example {
+            display: none;
+            margin-top: 15px;
+            background-color: var(--code-bg);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            overflow-x: auto;
+        }
+
+        pre {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background-color: var(--code-bg);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .output {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-left: 4px solid #81c784;
+            margin-top: 10px;
+        }
+
+        .output-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .github-corner {
+            position: absolute;
+            top: 0;
+            right: 0;
+            border: 0;
+            z-index: 1;
+        }
+
+        /* Navigation tabs */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .nav-tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+            font-weight: bold;
+        }
+
+        /* Biography page styles */
+        .biography-page {
+            display: none;
+        }
+
+        .team-member {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .member-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .member-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            border: 3px solid var(--primary);
+        }
+
+        .divider {
+            height: 2px;
+            background-color: var(--accent);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- GitHub corner ribbon -->
+    <a href="https://github.com/Undalevein/Funktion" class="github-corner" aria-label="View source on GitHub">
+        <svg width="80" height="80" viewBox="0 0 250 250" style="fill:#4a6fa5; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
+            <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+            <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+            <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path>
+        </svg>
+    </a>
+
+    <!-- Navigation tabs -->
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showTab('language')">Language</div>
+        <div class="nav-tab" onclick="showTab('team')">Team</div>
+    </div>
+
+    <!-- Language Page (main content) -->
+    <div id="language-page">
+        <header>
+            <a href="https://github.com/Undalevein/Funktion" class="logo-container">
+                <img src="https://raw.githubusercontent.com/Undalevein/Funktion/c9d5854adf0e02323d5054f57243cf65ab835b70/docs/funktion_logo.png" alt="Funktion Logo" class="logo" title="View on GitHub">
+            </a>
+            <h1>Funktion</h1>
+        </header>
+
+        <section class="backstory">
+            <h2>The Story Behind Funktion</h2>
+            <p>The story behind this language begins in calculus II. I was introduced by Prof. Patrick Shanahan to the concept of parametrics, functions whose variables could be independently controlled by multiple discrete functions. I used what I had learned to expedite the design of bespoke graphical components for freelance animations.</p>
+            <p>This inspiration led me down a rabbit hole of mathematical discovery, which culminated in the development of my current senior project, Parametrix, a functional animation programming suite leveraging parametric notation for quickly automating short animations. I initially developed Funktion as a helpful way to make programming in this paradigm as quick and intuitive as possible. Although its syntax may be read by others as terse, it makes up for it with its brevity.</p>
+        </section>
+
+        <section class="feature">
+            <h2>About Funktion</h2>
+            <p>Funktion is a functional, generational, concise programming language that leverages aspects of parametric math notation, perfect for people who love math. Functions are defined as generators that are stepped through according to a global or local time step. The time step varies over an interval from a starting to ending point, allowing several independently-running functions to interact at different points in the program.</p>
+        </section>
+
+        <section class="feature">
+            <h2>Language Features</h2>
+
+            <div class="feature">
+                <h3>Comments</h3>
+                <div class="example">
+                    <pre><code>// This is a comment! Oooga Booga
+print("Hello, World!")</code></pre>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Types</h3>
+                <div class="example">
+                    <h4>Numbers</h4>
+                    <ul>
+                        <li><code>42</code></li>
+                        <li><code>5.2</code></li>
+                    </ul>
+
+                    <h4>Characters</h4>
+                    <p>Each character is wrapped in single quotation marks.</p>
+                    <ul>
+                        <li><code>'a'</code></li>
+                        <li><code>'\n'</code> - Line Feed (New Line)</li>
+                        <li><code>'\t'</code> - Horizontal Tab</li>
+                        <li><code>'\r'</code> - Carriage Return</li>
+                        <li><code>'\b'</code> - Backspace</li>
+                        <li><code>'\\'</code> - Backslash Character (<code>\</code>)</li>
+                        <li><code>'\"'</code> - Double Quotation Character (<code>"</code>)</li>
+                    </ul>
+
+                    <h4>Strings</h4>
+                    <p>Each string is wrapped in double quotation marks.</p>
+                    <ul>
+                        <li><code>"Hello!"</code></li>
+                        <li><code>"24t4t"</code></li>
+                        <li><code>"Bob says \"Hello\" to you!"</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Operators</h3>
+                <div class="example">
+                    <h4>Arithmetic Operators</h4>
+                    <table>
+                        <tr><th>Operator</th><th>Description</th><th>Example</th></tr>
+                        <tr><td><code>+</code></td><td>Addition</td><td><code>4 + 5</code></td></tr>
+                        <tr><td><code>-</code></td><td>Negation</td><td><code>-9</code></td></tr>
+                        <tr><td><code>-</code></td><td>Subtraction</td><td><code>7 - 2</code></td></tr>
+                        <tr><td><code>*</code></td><td>Multiplication</td><td><code>4 * 8</code></td></tr>
+                        <tr><td><code>/</code></td><td>Division</td><td><code>12 / 3</code></td></tr>
+                        <tr><td><code>**</code></td><td>Exponentiation</td><td><code>2 ** 9</code></td></tr>
+                        <tr><td><code>%</code></td><td>Modulus (Not Remainder)</td><td><code>11 % 2</code></td></tr>
+                    </table>
+
+                    <h4>Bitwise Operators</h4>
+                    <table>
+                        <tr><th>Operator</th><th>Description</th><th>Example</th></tr>
+                        <tr><td><code>~</code></td><td>Bitwise Not</td><td><code>~9</code></td></tr>
+                        <tr><td><code>&</code></td><td>Bitwise And</td><td><code>7 & 3</code></td></tr>
+                        <tr><td><code>|</code></td><td>Bitwise Or</td><td><code>2 | 8</code></td></tr>
+                        <tr><td><code><<</code></td><td>Left Bit Shift</td><td><code>7 << 2</code></td></tr>
+                        <tr><td><code>>></code></td><td>Right Bit Shift</td><td><code>64 >> 4</code></td></tr>
+                    </table>
+
+                    <h4>Relational Operators</h4>
+                    <table>
+                        <tr><th>Operator</th><th>Description</th><th>Example</th></tr>
+                        <tr><td><code>==</code></td><td>Equals</td><td><code>9 == 9</code></td></tr>
+                        <tr><td><code>!=</code></td><td>Not Equals</td><td><code>9 != 9</code></td></tr>
+                        <tr><td><code><</code></td><td>Less Than</td><td><code>9 < 9</code></td></tr>
+                        <tr><td><code><=</code></td><td>Less Than or Equals</td><td><code>9 <= 9</code></td></tr>
+                        <tr><td><code>></code></td><td>Greater Than</td><td><code>9 > 9</code></td></tr>
+                        <tr><td><code>>=</code></td><td>Greater Than or Equals</td><td><code>9 >= 9</code></td></tr>
+                    </table>
+
+                    <h4>Miscellaneous Operators</h4>
+                    <table>
+                        <tr><th>Operator</th><th>Description</th><th>Example</th></tr>
+                        <tr><td><code>+</code></td><td>String Concatenation</td><td><code>"Hi" + " Joe"</code></td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Ranges</h3>
+                <div class="example">
+                    <p>Ranges are the building blocks of Funktion programming. They allow programmers to perform the same function multiple times.</p>
+                    
+                    <h4>Numerical Ranges</h4>
+                    <ul>
+                        <li><code>`0..10`</code> → <code>0 1 2 3 4 5 6 7 8 9 10</code></li>
+                        <li><code>`0..10 t1t`</code> → <code>0 1 2 3 4 5 6 7 8 9 10</code></li>
+                        <li><code>`10..0`</code> → <code>10 9 8 7 6 5 4 3 2 1 0</code></li>
+                        <li><code>`0..10 t-1t`</code> → <code>0</code></li>
+                        <li><code>`0..5 t0.2t`</code> → <code>0 0.2 0.4 0.6 ... 4.6 4.8 5</code></li>
+                    </ul>
+
+                    <h4>Infinite Numerical Ranges</h4>
+                    <ul>
+                        <li><code>`0..`</code> → <code>0 1 2 3 4 5 6 7 8 9 10 11 12 13...</code></li>
+                        <li><code>`..0`</code> → <code>0 -1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -12 -13...</code></li>
+                    </ul>
+
+                    <h4>Character Ranges</h4>
+                    <ul>
+                        <li><code>`'a'..'e'`</code> → <code>a b c d e</code></li>
+                        <li><code>`'y'..'t'`</code> → <code>y x w v u t</code></li>
+                        <li><code>`'a'..'h' t2t`</code> → <code>a c e g</code></li>
+                        <li><code>`'Y'..'c'`</code> → <code>Y Z [ \ ] ^ _ ` a b c</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Functions</h3>
+                <div class="example">
+                    <h4>Declaring Functions</h4>
+                    <ul>
+                        <li><code>f(x) = 2x</code></li>
+                        <li><code>g(x) = x</code></li>
+                    </ul>
+
+                    <h4>Calling Functions</h4>
+                    <ul>
+                        <li><code>f(x).step(3)</code> - Calls the function 3 times.</li>
+                        <li><code>print(f(x):2)</code> - Prints the output of the function until 2.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Chain of Questioning</h3>
+                <div class="example">
+                    <p>The <strong>chain of questioning</strong> allows you to perform a series of conditional checks using consecutive <code>?</code> symbols. Each <code>?</code> represents a case to be checked, and the <code>:</code> symbol represents the "else" condition.</p>
+                    
+                    <h4>Syntax:</h4>
+                    <pre><code>? condition1 => action1
+? condition2 => action2
+? condition3 => action3
+: defaultAction</code></pre>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Consecutive Action Operator</h3>
+                <div class="example">
+                    <p>The <strong>consecutive action operator (<code>,</code>)</strong> allows you to chain multiple actions together on a single line. Actions are evaluated from left to right.</p>
+                    
+                    <h4>Syntax:</h4>
+                    <pre><code>action1, action2, action3</code></pre>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Keywords</h3>
+                <div class="example">
+                    <ul>
+                        <li><code>print</code> - A print statement that prints the item into the console.
+                            <ul><li><code>print("Bonjour!!!")</code></li></ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature">
+            <h2>Code Examples</h2>
+
+            <div class="feature">
+                <h3>Hello World - (hello.funk)</h3>
+                <div class="example">
+                    <p>Program below prints <code>"Hello, World!"</code>.</p>
+                    <pre><code>// This example prints the simple program "Hello, World!"
+print("Hello, World!")</code></pre>
+                    <div class="output">
+                        <div class="output-title">Output:</div>
+                        <pre>Hello, World!</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Factorial - (factorial.funk)</h3>
+                <div class="example">
+                    <p>Program below prints the factorial of 5, which will output <code>120</code> after iterating through each product. This is created using a method that outputs the answer using a recursive algorithm.</p>
+                    <pre><code>`5..1` t1t
+
+factorial(x) = x * factorial(x).step()
+
+print(factorial(x):1)</code></pre>
+                    <div class="output">
+                        <div class="output-title">Output:</div>
+                        <pre>5
+20
+60
+120
+120</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Combining Functions and Casting User Input</h3>
+                <div class="example">
+                    <pre><code>`1..5` t1t
+
+f(x) = x
+f(x).step(2)
+G(x) = number(input("Give me a value and I will multiply that sequence with that value."))
+
+(f(x) * G(x)).step(2)
+print(f(x):5)</code></pre>
+                    <div class="output">
+                        <div class="output-title">Expected Output:</div>
+                        <pre>1
+2
+3
+20
+25</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Chain of Questioning, Consecutive Actions</h3>
+                <div class="example">
+                    <pre><code>`15..1` t1t
+
+fizzbuzz(x) =
+    ? x % 15 == 0 => print("fizzbuzz"), fizzbuzz(x).step()
+    ? x % 3 == 0 => print("fizz"), fizzbuzz(x).step()
+    ? x % 5 == 0 => print("buzz"), fizzbuzz(x).step()
+    : print(x), fizzbuzz(x).step()</code></pre>
+                    <div class="output">
+                        <div class="output-title">Expected Output:</div>
+                        <pre>fizzbuzz
+14
+13
+fizz
+11
+buzz
+fizz
+8
+7
+fizz
+buzz
+4
+fizz
+2
+1</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Slice Example - (slices.funk)</h3>
+                <div class="example">
+                    <pre><code>`1..9` t3t
+
+f(x) = x ; x + 1 ; x + 2
+f(x).step(2)
+print(f(x):7)</code></pre>
+                    <div class="output">
+                        <div class="output-title">Expected Output:</div>
+                        <pre>1 2 3
+4 5 6
+7 8 9</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Team Biography Page -->
+    <div id="team-page" class="biography-page">
+        <header>
+            <h1>The Funktion Team</h1>
+        </header>
+
+        <div class="team-member">
+            <div class="member-header">
+                <img src="assets/wesley.jpg" alt="Team Member 1" class="member-photo">
+                <h2>Wesley Ng</h2>
+            </div>
+            <div class="divider"></div>
+            <p>Wesley is a computer science major student who is interested in programming languages, video game development, and speedrunning. He currently is working on an 3-dimensional esolang that is intended to be interesting and difficult to program. He has worked on other projects for gaming  including a 2D platformer and a slap card game, with some familiarity in Unity, Adobe Animate, and Aesprite. He is also working for professor Ray Toal on his research for Programming Languages Exploration where he explored 40+ languages and wrote many code snippets.</p>
+        </div>
+
+        <div class="team-member">
+            <div class="member-header">
+                <img src="assets/matthew.jpg" alt="Team Member 2" class="member-photo">
+                <h2>Matthew Savitt</h2>
+            </div>
+            <div class="divider"></div>
+            <p>Matthew is a computer science major student who has a passion for technical animation, illustration, and roguelike video games. He currently is working on a suite of web-based animation software that allows for functional programming of animations. He has worked on other projects including Squibble, a web based public whiteboard, and works as a freelance cartoonist and animator. He hopes to one day design software that can make animation faster while remaining deeply personalizable.</p>
+        </div>
+
+        <div class="team-member">
+            <div class="member-header">
+                <img src="assets/reed.png" alt="Team Member 3" class="member-photo">
+                <h2>Reed Maniscalchi</h2>
+            </div>
+            <div class="divider"></div>
+            <p>Reed is a computer science and statistics & data science major who is interested in video game design and mathematics. He is currently working on a strategic 4-player board game, a research paper for approximating mathematical constants using Minecraft, and a graphics library for a customizable underwater aquarium. He has worked on other projects such as a mobile app that can search for new songs based on the user's music preferences.</p>
+        </div>
+    </div>
+
+    <script>
+        // Show the default tab on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            showTab('language');
+            
+            // Set up collapsible sections
+            const headers = document.querySelectorAll('h3');
+            headers.forEach(header => {
+                header.addEventListener('click', function() {
+                    this.classList.toggle('expanded');
+                    const example = this.nextElementSibling;
+                    example.style.display = example.style.display === 'block' ? 'none' : 'block';
+                });
+            });
+        });
+
+        function showTab(tabName) {
+            // Hide all pages
+            document.getElementById('language-page').style.display = 'none';
+            document.getElementById('team-page').style.display = 'none';
+            
+            // Show the selected page
+            document.getElementById(tabName + '-page').style.display = 'block';
+            
+            // Update active tab styling
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase() === tabName) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

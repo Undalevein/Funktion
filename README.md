@@ -1,5 +1,7 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/Undalevein/Funktion/c9d5854adf0e02323d5054f57243cf65ab835b70/docs/funktion_logo.png" width="120" height="64">
+  <a href="https://undalevein.github.io/Funktion/">
+    <img src="https://raw.githubusercontent.com/Undalevein/Funktion/c9d5854adf0e02323d5054f57243cf65ab835b70/docs/funktion_logo.png" width="64" height="64">
+  </a>
 </p>
 
 <p align="center">
@@ -155,7 +157,7 @@ If a local scope exceeds the bounds of a given global scope, the program will le
 #### Calling Functions
 
 - `f(x).step(3)` - Calls the function 3 times.
-- `print(f:2)` - Prints the output of the function until 2.
+- `print(f(x):2)` - Prints the output of the function until 2.
 
 In Funktion, any time a function is called with `.step()`, the function will generate the next output over the given time step, moving forward from the first step to also generate the next step when initially called. By default, `.step()` will step one defined time step. If the time step is defined as 2, it will step through the input value by 2. If a function with a time step of 2 calls itself with `.step(2)`, it will step twice, generating twice, stepping through the input value by 4. The local defined time step takes precedence over the global time step for all functions in the given program, which is 1 by default if not defined at the start of the program. The step value need not align with the global or even local time step, but the function will end generation once the end value is either reached or passed.
 
