@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/Undalevein/Funktion/c9d5854adf0e02323d5054f57243cf65ab835b70/docs/funktion_logo.png" width="64" height="64">
+<img src="https://raw.githubusercontent.com/Undalevein/Funktion/c9d5854adf0e02323d5054f57243cf65ab835b70/docs/funktion_logo.png" width="120" height="64">
 </p>
 
 <p align="center">
@@ -164,7 +164,7 @@ A function's generated outputs are influenced by any additional operations or mu
 For example, consider the expression:
 
 ```funktion
-(G(x) + f(x)).step(2)
+{G(x) + f(x)}.step(2)
 ```
 
 This will step through both `G` and `f` by `x`'s step value, while also making their output for that iteration the sum of their results for two generations.
