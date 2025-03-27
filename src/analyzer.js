@@ -56,21 +56,35 @@ export default function analyze(match) {
   }
 
   const builder = match.matcher.grammar.createSemantics().addOperation("rep", {
-    Program(globalRange, statements) {
+    Program(globalRanges, _newLines, _moreNewlines, statements) {
       return core.program(
-        globalRange?.rep(),
-        statements.children.map((statement) => statement.rep())
+        globalRanges?.[0]?.rep() ?? null,
+        statements.asIteration().children.map((statement) => statement?.rep())
       );
     },
 
-    FuncDef(id, param, _eq, body) {
+    FuncDef(
+      id,
+      _open,
+      param,
+      _close,
+      _eq,
+      _newLine,
+      body,
+      _semicolon,
+      _something
+    ) {
       mustNotAlreadyBeDeclared(id.sourceString, { at: id });
-      const func = core.funcDef(id.sourceString, param.rep(), body.rep());
+      const func = core.funcDef(
+        id.sourceString,
+        param.sourceString,
+        body?.rep()
+      );
       context.add(id.sourceString, func);
       return func;
     },
 
-    FuncCall(id, arg) {
+    FuncCall(id, _open, arg, _close) {
       const func = context.lookup(id.sourceString);
       mustHaveBeenFound(func, id.sourceString, { at: id });
       return core.funcCall(id.sourceString, arg.rep());
@@ -80,51 +94,100 @@ export default function analyze(match) {
       return core.functionGroup(expr.rep());
     },
 
-    Expr(condExpr, rest) {
+    Expr(condExpr, _sep, _newLine, rest) {
       return core.expr(
         condExpr.rep(),
         rest.children.map((r) => r.rep())
       );
     },
 
-    CondExpr(condition, thenBranch, elseBranch) {
+    CondExpr_ternary(
+      _question,
+      condition,
+      _newLine,
+      thenBranch,
+      _semicolon,
+      elseBranch
+    ) {
       const cond = condition.rep();
       mustHaveBooleanType(cond, { at: condition });
       return core.condExpr(cond, thenBranch.rep(), elseBranch?.rep());
     },
 
-    BitwiseExpr(left, op, right) {
+    CondExpr(bitwiseExpr) {
+      const expr = bitwiseExpr.rep();
+      return core.shiftExpr(expr);
+    },
+
+    BitwiseExpr_binary(left, op, right) {
       const l = left.rep();
       const r = right.rep();
       mustBothHaveTheSameType(l, r, { at: op });
       return core.bitwiseExpr(l, op.sourceString, r);
     },
 
-    ShiftExpr(left, op, right) {
+    BitwiseExpr(shiftExpr) {
+      const expr = shiftExpr.rep();
+      return core.shiftExpr(expr);
+    },
+
+    ShiftExpr_binary(left, op, right) {
       const l = left.rep();
       const r = right.rep();
       mustBothHaveTheSameType(l, r, { at: op });
       return core.shiftExpr(l, op.sourceString, r);
     },
 
-    AddExpr(left, op, right) {
+    ShiftExpr(addExpr) {
+      const expr = addExpr.rep();
+      return core.shiftExpr(expr);
+    },
+
+    AddExpr_binary(left, op, right) {
       const l = left.rep();
       const r = right.rep();
       mustBothHaveTheSameType(l, r, { at: op });
       return core.addExpr(l, op.sourceString, r);
     },
 
-    MulExpr(left, op, right) {
+    AddExpr(mulExpr) {
+      const expr = mulExpr.rep();
+      return core.shiftExpr(expr);
+    },
+
+    MulExpr_binary(left, op, right) {
       const l = left.rep();
       const r = right.rep();
       mustBothHaveTheSameType(l, r, { at: op });
       return core.mulExpr(l, op.sourceString, r);
     },
 
-    Factor(base, op, exponent) {
+    MulExpr_mul(left, right) {
+      const l = left.rep();
+      const r = right.rep();
+      mustBothHaveTheSameType(l, r, { at: op });
+      return core.mulExpr(l, op.sourceString, r);
+    },
+
+    MulExpr(factor) {
+      const expr = factor.rep();
+      return core.shiftExpr(expr);
+    },
+
+    Factor_exponentiation(base, op, exponent) {
       const b = base.rep();
       const e = exponent?.rep();
       return core.factor(b, op?.sourceString, e);
+    },
+
+    Factor_negation(op, right) {
+      const r = right.rep();
+      return core.factor(op.sourceString, r, e);
+    },
+
+    Factor_bitwisenegation(op, right) {
+      const r = right.rep();
+      return core.factor(op.sourceString, b, e);
     },
 
     Primary(value) {
@@ -155,32 +218,37 @@ export default function analyze(match) {
       return core.localRange(id.sourceString, range.rep(), timestep?.rep());
     },
 
-    NumRange(_open, start, _dots, end, _close) {
-      return core.numRange(start.rep(), end?.rep());
+    numrange(_open, start, _dots, end, _close) {
+      return core.numRange(start?.rep(), end?.rep());
     },
 
-    CharRange(_open, start, _dots, end, _close) {
-      return core.charRange(start.rep(), end?.rep());
+    charrange(_open, start, _dots, end, _close) {
+      return core.charRange(start?.rep(), end?.rep());
     },
 
-    Timestep(_tstart, value, _tend) {
+    timestep(_tstart, _question, value, _tend) {
       return core.timestep(value.rep());
     },
 
-    Num(value) {
-      return core.num(Number(value.sourceString));
+    num(value, period, decimal) {
+      const number = Number(
+        value.sourceString + period.sourceString + decimal.sourceString
+      );
+      return core.num(number);
     },
 
-    StringLiteral(value) {
-      return core.stringLiteral(value.sourceString);
+    stringliteral(_start, value, _end) {
+      return core.stringLiteral(value?.sourceString);
     },
 
-    CharLiteral(value) {
+    charliteral(_start, value, _end) {
       return core.charLiteral(value.sourceString);
     },
 
-    Id(name) {
-      const entity = context.lookup(name.sourceString);
+    id(firstChar, name) {
+      const entity = context.lookup(
+        firstChar.sourceString + name?.sourceString
+      );
       mustHaveBeenFound(entity, name.sourceString, { at: name });
       return entity;
     },
