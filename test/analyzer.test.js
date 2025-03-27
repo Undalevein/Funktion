@@ -2,13 +2,6 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import parse from "../src/parser.js";
 import analyze from "../src/analyzer.js";
-import {
-  program,
-  variableDeclaration,
-  variable,
-  binary,
-  floatType,
-} from "../src/core.js";
 
 // Programs that are semantically correct
 const semanticChecks = [
@@ -17,7 +10,7 @@ const semanticChecks = [
   ["integer addition", "f(x)=1+1"],
   ["integer subtraction", "f(x)=1-1"],
   ["integer multiplication", "f(x)=1*1"],
-  ["integer division", "f(x)=/+1"],
+  ["integer division", "f(x)=1/1"],
   ["integer exponentiation", "f(x)=1**1"],
   ["integer modulus", "f(x)=1%1"],
   ["integer negation", "f(x)=-1"],
@@ -39,27 +32,27 @@ const semanticErrors = [
   [
     "input function outside function declaration",
     "input()",
-    /Input must be inside function declaration/,
+    /Input statements must be inside functions/,
   ],
   [
     "adding a string by an integer",
-    'print(f(x)="hi"+1)',
-    /Input must be inside function declaration/,
+    'f(x)="hi"+1',
+    /Operands do not have the same type/,
   ],
   [
     "subtracting a string by an integer",
-    'print(f(x)="hi"-1)',
-    /Input must be inside function declaration/,
+    'f(x)="hi"-1',
+    /Operands do not have the same type/,
   ],
   [
     "multiplying a string by an integer",
-    'print(f(x)="hi"*1)',
-    /Input must be inside function declaration/,
+    'f(x)="hi"*1',
+    /Operands do not have the same type/,
   ],
   [
     "dividing a string by an integer",
-    'print(f(x)="hi"/1)',
-    /Input must be inside function declaration/,
+    'f(x)="hi"/1',
+    /Operands do not have the same type/,
   ],
 ];
 
@@ -74,15 +67,4 @@ describe("The analyzer", () => {
       assert.throws(() => analyze(parse(source)), errorMessagePattern);
     });
   }
-  it("produces the expected representation for a trivial program", () => {
-    assert.deepEqual(
-      analyze(parse("let x = π + 2.2;")),
-      program([
-        variableDeclaration(
-          variable("x", true, floatType),
-          binary("+", variable("π", false, floatType), 2.2, floatType)
-        ),
-      ])
-    );
-  });
 });

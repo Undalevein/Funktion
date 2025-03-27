@@ -47,10 +47,6 @@ export default function analyze(match) {
     must(entity, `Identifier ${name} not declared`, at);
   }
 
-  function mustHaveBooleanType(e, at) {
-    must(e.type === core.booleanType, "Expected a boolean", at);
-  }
-
   function mustBothHaveTheSameType(e1, e2, at) {
     must(e1.type === e2.type, "Operands do not have the same type", at);
   }
@@ -61,6 +57,10 @@ export default function analyze(match) {
         globalRanges?.[0]?.rep() ?? null,
         statements.asIteration().children.map((statement) => statement?.rep())
       );
+    },
+    
+    _iter(...children) {
+      return children.map(child => child?.rep()).filter(Boolean);
     },
 
     FuncDef(
@@ -75,11 +75,16 @@ export default function analyze(match) {
       _something
     ) {
       mustNotAlreadyBeDeclared(id.sourceString, { at: id });
-      const func = core.funcDef(
-        id.sourceString,
-        param.sourceString,
-        body?.rep()
-      );
+      const originalContext = context;
+      context = context.newChildContext();
+      context.add(param.sourceString, { 
+        kind: "Parameter",
+        type: core.numberType,
+        name: param.sourceString
+      });
+      const analyzedBody = body?.rep();
+      context = originalContext;
+      const func = core.funcDef(id.sourceString, param.sourceString, analyzedBody);
       context.add(id.sourceString, func);
       return func;
     },
@@ -110,7 +115,6 @@ export default function analyze(match) {
       elseBranch
     ) {
       const cond = condition.rep();
-      mustHaveBooleanType(cond, { at: condition });
       return core.condExpr(cond, thenBranch.rep(), elseBranch?.rep());
     },
 
@@ -182,12 +186,12 @@ export default function analyze(match) {
 
     Factor_negation(op, right) {
       const r = right.rep();
-      return core.factor(op.sourceString, r, e);
+      return core.factor(op.sourceString, r);
     },
 
     Factor_bitwisenegation(op, right) {
       const r = right.rep();
-      return core.factor(op.sourceString, b, e);
+      return core.factor(op.sourceString, r);
     },
 
     Primary(value) {
@@ -203,6 +207,9 @@ export default function analyze(match) {
     },
 
     InputStmt(_input, _open, prompt, _close) {
+      if (!context.function) {
+        throw new Error("Input statements must be inside functions");
+      }
       return core.inputStmt(prompt?.rep());
     },
 

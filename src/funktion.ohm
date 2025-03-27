@@ -1,5 +1,5 @@
 Funktion {
-  Program        = (GlobalRange "\n")? "\n"* ListOf<(Statement | FuncDef | ""), "\n"+>
+  Program        = (GlobalRange "\n")? "\n"* ListOf<(Statement | FuncDef | ""), ("\n"+ | space+)>
 
   FuncDef        = id "(" id ")" "=" "\n"? Expr (";" (FuncDef | Expr))*
   FuncCall		   = id "(" id ")"
@@ -64,5 +64,5 @@ Funktion {
   keyword        = input | print | step
 
   space         := ~"\n" "\x00".."\x20" 
-                 | "//" (~"\n" any)*  "\n"                              -- comment
+                 | "//" (~"\n" any)*  ("\n" | end)                 -- comment
 }

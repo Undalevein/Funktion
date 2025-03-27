@@ -100,14 +100,12 @@ export function id(name) {
 
 export const numberType = "number";
 export const stringType = "string";
-export const booleanType = "boolean";
 export const functionType = "function";
 export const voidType = "void";
 
 export const standardLibrary = Object.freeze({
   number: numberType,
   string: stringType,
-  boolean: booleanType,
   void: voidType,
   print: { kind: "IntrinsicFunction", name: "print", type: functionType },
   input: { kind: "IntrinsicFunction", name: "input", type: functionType },
@@ -116,4 +114,3 @@ export const standardLibrary = Object.freeze({
 
 Number.prototype.type = numberType;
 String.prototype.type = stringType;
-Boolean.prototype.type = booleanType;
