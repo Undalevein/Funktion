@@ -106,6 +106,7 @@ export const voidType = "void";
 export const standardLibrary = Object.freeze({
   number: numberType,
   string: stringType,
+  function: functionType,
   void: voidType,
   print: { kind: "IntrinsicFunction", name: "print", type: functionType },
   input: { kind: "IntrinsicFunction", name: "input", type: functionType },

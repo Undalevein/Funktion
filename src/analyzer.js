@@ -54,20 +54,20 @@ export default function analyze(match) {
   const builder = match.matcher.grammar.createSemantics().addOperation("rep", {
     Program(globalRanges, _newLines, _moreNewlines, statements) {
       return core.program(
-        globalRanges?.[0]?.rep() ?? null,
+        globalRanges.rep().length ? globalRanges.rep() : null,
         statements.asIteration().children.map((statement) => statement?.rep())
       );
     },
-    
+
     _iter(...children) {
-      return children.map(child => child?.rep()).filter(Boolean);
+      return children.map((child) => child?.rep()).filter(Boolean);
     },
 
     FuncDef(
       id,
-      _open,
+      open,
       param,
-      _close,
+      close,
       _eq,
       _newLine,
       body,
@@ -75,24 +75,50 @@ export default function analyze(match) {
       _something
     ) {
       mustNotAlreadyBeDeclared(id.sourceString, { at: id });
+      // Temporary check inside the function.
       const originalContext = context;
       context = context.newChildContext();
-      context.add(param.sourceString, { 
+      context.add(param.sourceString, {
         kind: "Parameter",
         type: core.numberType,
-        name: param.sourceString
+        name: param.sourceString,
+      });
+      const functionId =
+        id.sourceString +
+        open.sourceString +
+        param.sourceString +
+        close.sourceString;
+      context.add(functionId, {
+        kind: "Function",
+        type: core.functionType,
+        name: functionId,
       });
       const analyzedBody = body?.rep();
+      // Checks outside of the function definition.
       context = originalContext;
-      const func = core.funcDef(id.sourceString, param.sourceString, analyzedBody);
+      context.add(functionId, {
+        kind: "Function",
+        type: core.functionType,
+        name: functionId,
+      });
+      const func = core.funcDef(
+        id.sourceString,
+        param.sourceString,
+        analyzedBody
+      );
       context.add(id.sourceString, func);
       return func;
     },
 
-    FuncCall(id, _open, arg, _close) {
-      const func = context.lookup(id.sourceString);
+    FuncCall(id, open, arg, close) {
+      const functionId =
+        id.sourceString +
+        open.sourceString +
+        arg.sourceString +
+        close.sourceString;
+      const func = context.lookup(functionId);
       mustHaveBeenFound(func, id.sourceString, { at: id });
-      return core.funcCall(id.sourceString, arg.rep());
+      return core.funcCall(id.sourceString);
     },
 
     FunctionGroup(_open, expr, _close) {
@@ -120,7 +146,7 @@ export default function analyze(match) {
 
     CondExpr(bitwiseExpr) {
       const expr = bitwiseExpr.rep();
-      return core.shiftExpr(expr);
+      return core.condExpr(expr);
     },
 
     BitwiseExpr_binary(left, op, right) {
@@ -132,7 +158,7 @@ export default function analyze(match) {
 
     BitwiseExpr(shiftExpr) {
       const expr = shiftExpr.rep();
-      return core.shiftExpr(expr);
+      return core.bitwiseExpr(expr);
     },
 
     ShiftExpr_binary(left, op, right) {
@@ -156,7 +182,7 @@ export default function analyze(match) {
 
     AddExpr(mulExpr) {
       const expr = mulExpr.rep();
-      return core.shiftExpr(expr);
+      return core.addExpr(expr);
     },
 
     MulExpr_binary(left, op, right) {
@@ -175,7 +201,7 @@ export default function analyze(match) {
 
     MulExpr(factor) {
       const expr = factor.rep();
-      return core.shiftExpr(expr);
+      return core.mulExpr(expr);
     },
 
     Factor_exponentiation(base, op, exponent) {
@@ -203,11 +229,15 @@ export default function analyze(match) {
     },
 
     StepCall(expr, _dot, _step, _open, stepValue, _close) {
-      return core.stepCall(expr.rep(), stepValue?.rep());
+      // Syntax Sugar: Default step count is 1.
+      return core.stepCall(
+        expr.rep(),
+        stepValue.rep().length ? stepValue.rep() : 1
+      );
     },
 
     InputStmt(_input, _open, prompt, _close) {
-      if (!context.function) {
+      if (!context.parent) {
         throw new Error("Input statements must be inside functions");
       }
       return core.inputStmt(prompt?.rep());
