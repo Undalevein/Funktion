@@ -48,7 +48,13 @@ export default function analyze(match) {
   }
 
   function mustBothHaveTheSameType(e1, e2, at) {
-    must(e1.type === e2.type, "Operands do not have the same type", at);
+    must(
+      e1.type === e2.type ||
+        e1.type === core.anyType ||
+        e2.type === core.anyType,
+      "Operands do not have the same type",
+      at
+    );
   }
 
   const builder = match.matcher.grammar.createSemantics().addOperation("rep", {
