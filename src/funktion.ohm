@@ -6,7 +6,7 @@ Funktion {
   Expr           = CondExpr (("," | ":") "\n"? CondExpr)*
   CondExpr       = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") BitwiseExpr "=>" BitwiseExpr --ternary
                  | BitwiseExpr
-  BitwiseExpr    = BitwiseExpr ("&" | "|") ShiftExpr              --binary
+  BitwiseExpr    = BitwiseExpr ("&" | "|" | "^") ShiftExpr              --binary
                  | ShiftExpr
   ShiftExpr      = ShiftExpr ("<<" | ">>") AddExpr                --binary
                  | AddExpr

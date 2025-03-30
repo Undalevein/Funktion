@@ -47,12 +47,26 @@ export default function analyze(match) {
     must(entity, `Identifier ${name} not declared`, at);
   }
 
-  function mustBothHaveTheSameType(e1, e2, at) {
+  function mustBeTypeUnary(e1, type, at) {
+    must(
+      e1.type === type || e1.type === core.anyType,
+      `Operator does not support ${e1.type} types. Expected ${type}`,
+      at
+    );
+  }
+
+  function mustBeTypeBinary(e1, e2, type, at) {
     must(
       e1.type === e2.type ||
         e1.type === core.anyType ||
         e2.type === core.anyType,
-      "Operands do not have the same type",
+      `Operands do not have the same type. Given ${e1.type} and ${e2.type} types`,
+      at
+    );
+    must(
+      (e1.type === type || e1.type === core.anyType) &&
+        (e2.type === type || e2.type === core.anyType),
+      `Operator does not support ${e1.type} types. Expected ${type}`,
       at
     );
   }
@@ -158,7 +172,7 @@ export default function analyze(match) {
     BitwiseExpr_binary(left, op, right) {
       const l = left.rep();
       const r = right.rep();
-      mustBothHaveTheSameType(l, r, { at: op });
+      mustBeTypeBinary(l, r, core.numberType, { at: op });
       return core.bitwiseExpr(l, op.sourceString, r);
     },
 
@@ -170,7 +184,7 @@ export default function analyze(match) {
     ShiftExpr_binary(left, op, right) {
       const l = left.rep();
       const r = right.rep();
-      mustBothHaveTheSameType(l, r, { at: op });
+      mustBeTypeBinary(l, r, core.numberType, { at: op });
       return core.shiftExpr(l, op.sourceString, r);
     },
 
@@ -182,7 +196,15 @@ export default function analyze(match) {
     AddExpr_binary(left, op, right) {
       const l = left.rep();
       const r = right.rep();
-      mustBothHaveTheSameType(l, r, { at: op });
+      if (op.sourceString === "-") {
+        mustBeTypeBinary(l, r, core.numberType, { at: op });
+      } else {
+        if (l.type === core.numberType) {
+          mustBeTypeBinary(l, r, core.numberType, { at: op });
+        } else {
+          mustBeTypeBinary(l, r, core.stringType, { at: op });
+        }
+      }
       return core.addExpr(l, op.sourceString, r);
     },
 
@@ -194,14 +216,14 @@ export default function analyze(match) {
     MulExpr_binary(left, op, right) {
       const l = left.rep();
       const r = right.rep();
-      mustBothHaveTheSameType(l, r, { at: op });
+      mustBeTypeBinary(l, r, core.numberType, { at: op });
       return core.mulExpr(l, op.sourceString, r);
     },
 
     MulExpr_mul(left, right) {
       const l = left.rep();
       const r = right.rep();
-      mustBothHaveTheSameType(l, r, { at: op });
+      mustBeTypeBinary(l, r, core.numberType, { at: op });
       return core.mulExpr(l, op.sourceString, r);
     },
 
@@ -213,16 +235,19 @@ export default function analyze(match) {
     Factor_exponentiation(base, op, exponent) {
       const b = base.rep();
       const e = exponent?.rep();
+      mustBeTypeBinary(b, e, core.numberType, { at: op });
       return core.factor(b, op?.sourceString, e);
     },
 
     Factor_negation(op, right) {
       const r = right.rep();
+      mustBeTypeUnary(r, core.numberType, { at: op });
       return core.factor(op.sourceString, r);
     },
 
     Factor_bitwisenegation(op, right) {
       const r = right.rep();
+      mustBeTypeUnary(b, e, core.numberType, { at: op });
       return core.factor(op.sourceString, r);
     },
 

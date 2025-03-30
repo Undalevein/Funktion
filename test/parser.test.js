@@ -63,7 +63,9 @@ const syntaxErrors = [
   ["missing closing parenthesis", "print(2 + 1 * 3", /Line 1, col 16:/],
   ["missing closing parenthesis", "print(2 + (1 * 3)", /Line 1, col 18:/],
   ["missing closing parenthesis", "print(2 + (1 * (3)", /Line 1, col 19:/],
-  ["timeCall within function definition", "f(x)=g(h:5)", /Line 1, col 9:/],
+  ["timecall within function definition", "f(x)=g(h:5)", /Line 1, col 9:/],
+  ["timestep ranges are strings", '`"h".."m"`', /Line 1, col 2:/],
+  ["timestep ranges do not have the same types", "`'f'..3`", /Line 1, col 7:/],
 ];
 
 describe("The parser", () => {
