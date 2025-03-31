@@ -43,8 +43,10 @@ const syntaxChecks = [
     "multiple statements on the same line, separate by commas",
     "f(x)=2; g(x)=3; h(x)=4",
   ],
-  ["Commenting", 'print("hi") //This is a comment'],
+  ["commenting", 'print("hi") //This is a comment'],
   ["using input as a function with arithmetic operation", "f(x)=input() + 2"],
+  ["local ranges", "print(f(x):[`0..2`])"],
+  ["local ranges with time step", "print(f(x):[`0..2` t1t])"],
 ];
 
 // Programs with syntax errors that the parser will detect

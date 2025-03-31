@@ -71,6 +71,14 @@ export default function analyze(match) {
     );
   }
 
+  function mustNotBeUnspecifiedTimestep(e1, e2, at) {
+    must(
+      e1.sourceString.length() !== 0 && e2.sourceString.length() !== 0,
+      `Timestep must have a number or character at the left or right of the range`,
+      at
+    );
+  }
+
   const builder = match.matcher.grammar.createSemantics().addOperation("rep", {
     Program(globalRanges, _newLines, _moreNewlines, statements) {
       return core.program(
@@ -222,9 +230,10 @@ export default function analyze(match) {
 
     MulExpr_mul(left, right) {
       const l = left.rep();
-      const r = right.rep();
+      const r = context.lookup(right);
+      context.lookup(r);
       mustBeTypeBinary(l, r, core.numberType, { at: op });
-      return core.mulExpr(l, op.sourceString, r);
+      return core.mulExpr(l, r);
     },
 
     MulExpr(factor) {
@@ -282,11 +291,16 @@ export default function analyze(match) {
       return core.globalRange(range.rep(), timestep?.rep());
     },
 
-    LocalRange(_open, id, _close, range, timestep) {
-      return core.localRange(id.sourceString, range.rep(), timestep?.rep());
+    LocalRange(_open, range, timestep, _closetimestep) {
+      return core.localRange(range.rep(), timestep?.rep());
     },
 
-    numrange(_open, start, _dots, end, _close) {
+    numrange(_open, negStart, start, _dots, negEnd, end, _close) {
+      const l = start.rep();
+      const r = end.rep();
+      l[0].value = Number(negStart.sourceString);
+      r[0].value = Number(negEnd.sourceString);
+      console.log(l, r);
       return core.numRange(start?.rep(), end?.rep());
     },
 

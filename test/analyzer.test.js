@@ -10,6 +10,7 @@ const semanticChecks = [
   ["integer addition", "f(x)=1+1"],
   ["integer subtraction", "f(x)=1-1"],
   ["integer multiplication", "f(x)=1*1"],
+  ["integer multiplication without operator", "f(x)=13x"],
   ["integer division", "f(x)=1/1"],
   ["integer exponentiation", "f(x)=1**1"],
   ["integer modulus", "f(x)=1%1"],
@@ -37,11 +38,15 @@ const semanticChecks = [
   ["step call", "f(x)=x\nprint(f(x).step())"],
   ["step call with specified number", "f(x)=x\nprint(f(x).step(4))"],
   ["time call", "f(x)=x\nprint(f(x):5)"],
-  ["global range in increasing range", "`1..3`\n"],
-  ["global range in decreasing range", "`1..-4`\n"],
-  ["global range with positive integer time step", "`1..10` t2t\n"],
-  ["global range with negative integer time step", "`1..10` t-2t\n"],
-  ["global range with float time step", "`1..10` t2.5t\n"],
+  ["global range in increasing range", "`1..3`\nf(x)=x"],
+  ["global range in decreasing range", "`-1..-4`\nf(x)=x"],
+  ["global range with integer time step", "`1..10` t2t\nf(x)=x"],
+  ["global range with float time step", "`1..10` t2.5t\nf(x)=x"],
+  ["input statement", 'f(x)=input("Please enter something")'],
+  ["local range in increasing range", "f(x)=x\nprint(f(x):[`-10..10`])"],
+  ["local range in decreasing range", "f(x)=x\nprint(f(x):[`10..-10`])"],
+  ["local range with integer time step", "f(x)=x\nprint(f(x):[`1..10` t2t])"],
+  ["local range with float time step", "f(x)=x\nprint(f(x):[`1..10` t0.2t])"],
 ];
 
 // Programs that are syntactically correct but have semantic errors
