@@ -27,6 +27,11 @@ const semanticChecks = [
   ["float modulus", "f(x)=1.1%2.2"],
   ["float negation", "f(x)=-1.1"],
   ["float negation", "f(x)=-1.1"],
+  ["float bitwise and", "f(x)=1.1&2.2"],
+  ["float bitwise or", "f(x)=1.1|2.2"],
+  ["float bitwise xor", "f(x)=1.1^2.2"],
+  ["float bitwise left shift", "f(x)=1.1<<2.2"],
+  ["float bitwise right shift", "f(x)=1.1>>2.2"],
   ["concatenating strings", 'f(x)="Hello, " + "World!"'],
   [
     "conditional expression with integer types",

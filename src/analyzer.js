@@ -298,9 +298,9 @@ export default function analyze(match) {
       return core.timestep(value.rep());
     },
 
-    num(value, period, decimal) {
+    num(sign, value, period, decimal) {
       const number = Number(
-        value.sourceString + period.sourceString + decimal.sourceString
+        sign.sourceString + value.sourceString + period.sourceString + decimal.sourceString
       );
       return core.num(number);
     },
@@ -320,6 +320,10 @@ export default function analyze(match) {
       mustHaveBeenFound(entity, name.sourceString, { at: name });
       return entity;
     },
+
+    _terminal(...children) {
+      return children.map(c => c.sourceString).join('');
+    }
   });
 
   return builder(match).rep();

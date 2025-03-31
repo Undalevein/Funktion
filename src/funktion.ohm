@@ -38,7 +38,7 @@ Funktion {
 
   GlobalRange    = range timestep?
   LocalRange     = "[" id "]:" range  timestep?
-  FunctionGroup = "{" Expr "}"
+  FunctionGroup  = "{" Expr "}"
   
   numrange       = "`" num ".." (num)? "`"
                  | "`" (num)? ".." num "`"
@@ -48,7 +48,7 @@ Funktion {
   
   timestep       = "t" "-"? num "t"
  
-  num            = digit+ ("." digit+)?
+  num            = "-"? digit+ ("." digit+)?
   stringliteral  = "\"" stringchar* "\""
   stringchar     = (~"\\" ~"\"" any) | "\\\\" | "\\\"" | escapechar
   charliteral    = "\'" char "\'"
