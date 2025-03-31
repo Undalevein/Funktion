@@ -37,8 +37,8 @@ Funktion {
   InputStmt      = "input" "(" stringliteral? ")"
 
   GlobalRange    = range timestep?
-  LocalRange     = "[" range  timestep? "]"
-  FunctionGroup = "{" Expr "}"
+  LocalRange     = "[" id "]:" range  timestep?
+  FunctionGroup  = "{" Expr "}"
   
   numrange       = "`" ("-"? num)? ".." ("-"? num)? "`"
   charrange      = "`" charliteral? ".." charliteral? "`"
@@ -46,7 +46,7 @@ Funktion {
   
   timestep       = "t" "-"? num "t"
  
-  num            = digit+ ("." digit+)?
+  num            = "-"? digit+ ("." digit+)?
   stringliteral  = "\"" stringchar* "\""
   stringchar     = (~"\\" ~"\"" any) | "\\\\" | "\\\"" | escapechar
   charliteral    = "\'" char "\'"
