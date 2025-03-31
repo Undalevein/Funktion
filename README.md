@@ -308,3 +308,59 @@ fizz
 2
 1
 ```
+## Static Checks
+This language also implements static checks to ensure that there are no grammatical errors with the code before it is compiled and ran.
+
+### Identifier ${name} already declared
+A function that is already declared cannot be declared again in the same code
+
+function mustNotAlreadyBeDeclared(name, at) {
+  must(!context.lookup(name), `Identifier ${name} already declared`, at);
+}
+
+### Identifier ${name} not declared
+A function that is not declared cannot be called in the code
+
+function mustHaveBeenFound(entity, name, at) {
+  must(entity, `Identifier ${name} not declared`, at);
+}
+
+### Operator does not support ${e1.type} types. Expected ${type}
+An operator must be a type that is supported by the language
+
+function mustBeTypeUnary(e1, type, at) {
+  must(
+    e1.type === type || e1.type === core.anyType,
+    `Operator does not support ${e1.type} types. Expected ${type}`,
+    at
+  );
+}
+
+### Operands do not have the same type. Given ${e1.type} and ${e2.type} types
+When 2 operators are used in the same operation, they must be the same type and a type supported by the language
+
+function mustBeTypeBinary(e1, e2, type, at) {
+  must(
+    e1.type === e2.type ||
+      e1.type === core.anyType ||
+      e2.type === core.anyType,
+    `Operands do not have the same type. Given ${e1.type} and ${e2.type} types`,
+    at
+  );
+  must(
+    (e1.type === type || e1.type === core.anyType) &&
+      (e2.type === type || e2.type === core.anyType),
+    `Operator does not support ${e1.type} types. Expected ${type}`,
+    at
+  );
+}
+
+### Input statements must be inside functions
+When an input statement is used, it must be written as a function in the code
+
+InputStmt(_input, _open, prompt, _close) {
+  if (!context.parent) {
+    throw new Error("Input statements must be inside functions");
+  }
+  return core.inputStmt(prompt?.rep());
+}
