@@ -32,7 +32,7 @@ Funktion {
                  | StepCall
                  | InputStmt
   PrintStmt      = "print" "(" (TimeCall | BitwiseExpr) ")"
-  TimeCall       = FuncCall ":" (num | LocalRange)
+  TimeCall       = FuncCall ":" num
   StepCall       =  (FuncCall | FunctionGroup) "." "step" "(" num? ")"
   InputStmt      = "input" "(" stringliteral? ")"
 
@@ -40,8 +40,10 @@ Funktion {
   LocalRange     = "[" id "]:" range  timestep?
   FunctionGroup  = "{" Expr "}"
   
-  numrange       = "`" ("-"? num)? ".." ("-"? num)? "`"
-  charrange      = "`" charliteral? ".." charliteral? "`"
+  numrange       = "`" num ".." (num)? "`"
+                 | "`" (num)? ".." num "`"
+  charrange      = "`" charliteral ".." (charliteral)? "`"
+                 | "`" (charliteral)? ".." (charliteral) "`"
   range          = numrange | charrange
   
   timestep       = "t" "-"? num "t"

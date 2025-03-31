@@ -71,14 +71,6 @@ export default function analyze(match) {
     );
   }
 
-  function mustNotBeUnspecifiedTimestep(e1, e2, at) {
-    must(
-      e1.sourceString.length() !== 0 && e2.sourceString.length() !== 0,
-      `Timestep must have a number or character at the left or right of the range`,
-      at
-    );
-  }
-
   const builder = match.matcher.grammar.createSemantics().addOperation("rep", {
     Program(globalRanges, _newLines, _moreNewlines, statements) {
       return core.program(
@@ -230,10 +222,9 @@ export default function analyze(match) {
 
     MulExpr_mul(left, right) {
       const l = left.rep();
-      const r = context.lookup(right);
-      context.lookup(r);
+      const r = right.rep();
       mustBeTypeBinary(l, r, core.numberType, { at: op });
-      return core.mulExpr(l, r);
+      return core.mulExpr(l, op.sourceString, r);
     },
 
     MulExpr(factor) {
@@ -291,16 +282,11 @@ export default function analyze(match) {
       return core.globalRange(range.rep(), timestep?.rep());
     },
 
-    LocalRange(_open, range, timestep, _closetimestep) {
-      return core.localRange(range.rep(), timestep?.rep());
+    LocalRange(_open, id, _close, range, timestep) {
+      return core.localRange(id.sourceString, range.rep(), timestep?.rep());
     },
 
-    numrange(_open, negStart, start, _dots, negEnd, end, _close) {
-      const l = start.rep();
-      const r = end.rep();
-      l[0].value = Number(negStart.sourceString);
-      r[0].value = Number(negEnd.sourceString);
-      console.log(l, r);
+    numrange(_open, start, _dots, end, _close) {
       return core.numRange(start?.rep(), end?.rep());
     },
 
@@ -314,7 +300,10 @@ export default function analyze(match) {
 
     num(sign, value, period, decimal) {
       const number = Number(
-        sign.sourceString + value.sourceString + period.sourceString + decimal.sourceString
+        sign.sourceString +
+          value.sourceString +
+          period.sourceString +
+          decimal.sourceString
       );
       return core.num(number);
     },
@@ -336,8 +325,8 @@ export default function analyze(match) {
     },
 
     _terminal(...children) {
-      return children.map(c => c.sourceString).join('');
-    }
+      return children.map((c) => c.sourceString).join("");
+    },
   });
 
   return builder(match).rep();
