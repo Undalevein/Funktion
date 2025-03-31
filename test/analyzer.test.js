@@ -47,6 +47,10 @@ const semanticChecks = [
   ["global range with positive integer time step", "`1..10` t2t\n"],
   ["global range with negative integer time step", "`1..10` t-2t\n"],
   ["global range with float time step", "`1..10` t2.5t\n"],
+  ["global range with character step", "`'a'..'z'`\n"],
+  ["function group", "f(x)=x\ng(x)=x\n{f(x)+g(x)}.step()"],
+  ["input statement with prompt", 'f(x)=input("Hello")'],
+  ["using the function parameter", "f(x)=x*3+x"],
 ];
 
 // Programs that are syntactically correct but have semantic errors
