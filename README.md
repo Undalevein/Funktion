@@ -140,7 +140,7 @@ Syntax-wise, it is similar to the examples above.
 
 ##### Local Scope
 
-- `` [x]:`.2..1.0` `` (Assume global scope interval is 0.2)
+- `` [x]:`0.2..1.0` ``
 - `` [y]:`0..5 t1t` ``
 
 If a local scope exceeds the bounds of a given global scope, the program will let the function continue to generate until the program's global scope is reached or passed.
