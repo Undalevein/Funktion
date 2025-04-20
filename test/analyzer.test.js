@@ -14,6 +14,7 @@ const semanticChecks = [
   ["integer exponentiation", "f(x)=1**1"],
   ["integer modulus", "f(x)=1%1"],
   ["integer negation", "f(x)=-1"],
+  ["integer bitwise negation", "f(x)=~1"],
   ["integer bitwise and", "f(x)=1&1"],
   ["integer bitwise or", "f(x)=1|1"],
   ["integer bitwise xor", "f(x)=1^1"],
@@ -32,6 +33,7 @@ const semanticChecks = [
   ["float bitwise xor", "f(x)=1.1^2.2"],
   ["float bitwise left shift", "f(x)=1.1<<2.2"],
   ["float bitwise right shift", "f(x)=1.1>>2.2"],
+  ["special multiplication synax", "f(x)=3x"],
   ["concatenating strings", 'f(x)="Hello, " + "World!"'],
   [
     "conditional expression with integer types",

@@ -223,8 +223,10 @@ export default function analyze(match) {
     MulExpr_mul(left, right) {
       const l = left.rep();
       const r = right.rep();
-      mustBeTypeBinary(l, r, core.numberType, { at: op });
-      return core.mulExpr(l, op.sourceString, r);
+      console.log("One: ", l);
+      console.log("Two: ", r);
+      mustBeTypeBinary(l, r, core.numberType, { at: right });
+      return core.mulExpr(l, "*", r);
     },
 
     MulExpr(factor) {
@@ -247,7 +249,7 @@ export default function analyze(match) {
 
     Factor_bitwisenegation(op, right) {
       const r = right.rep();
-      mustBeTypeUnary(b, e, core.numberType, { at: op });
+      mustBeTypeUnary(r, core.numberType, { at: op });
       return core.factor(op.sourceString, r);
     },
 
@@ -321,7 +323,7 @@ export default function analyze(match) {
         firstChar.sourceString + name?.sourceString
       );
       mustHaveBeenFound(entity, name.sourceString, { at: name });
-      return entity;
+      return core.id(firstChar.sourceString + name?.sourceString);
     },
 
     _terminal(...children) {
