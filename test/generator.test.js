@@ -32,7 +32,7 @@ const fixtures = [
     function funktionPrint(value) {
       if (Array.isArray(value)) {
         console.log(value.join('\\n'));
-      } 
+      }
       else {
         console.log(value);
       }
@@ -44,8 +44,8 @@ const fixtures = [
   },
   {
     name: "factorial",
-    source: `
-    \`5..1\` t1t
+    source: 
+    ` \`5..1\` t-1t
     factorial(x) = x * factorial(x).step()
     print(factorial(x))
     `,
@@ -69,13 +69,13 @@ const fixtures = [
     function funktionPrint(value) {
       if (Array.isArray(value)) {
         console.log(value.join('\\n'));
-      } 
+      }
       else {
         console.log(value);
       }
     }
 
-    const globalRange = generateRange(5, 1, 1);
+    const globalRange = generateRange(5, 1, -1);
     const factorial_1 = [];
     let previous_factorial_1 = 1;
     for (const x of globalRange) {
