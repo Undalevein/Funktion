@@ -77,7 +77,6 @@ export default function generate(program) {
     FuncDef(d) {
       const funcName = targetName(d);
       const param = d.param;
-      // console.log(d.body);
       const body = gen(d.body);
       output.push(`function ${funcName}(${param}) {`);
       output.push(`  ${body}`);
@@ -97,7 +96,6 @@ export default function generate(program) {
     Expr(e) {
       const exprs = [];
       for (const expr of [e.condExpr, ...e.rest]) {
-        console.log(expr)
         exprs.push(gen(expr));
       }
       return exprs;
@@ -110,7 +108,7 @@ export default function generate(program) {
         const elseBranch = gen(e.elseBranch);
         return `(${condition} ? ${thenBranch} : ${elseBranch})`;
       }
-      return gen(e.left);
+      return gen(e.condition);
     },
 
     BitwiseExpr(e) {
@@ -142,6 +140,8 @@ export default function generate(program) {
 
     MulExpr(e) {
       if (e.op) {
+        // console.log(gen(e.left));
+        // console.log(gen(e));
         const left = gen(e.left);
         const right = gen(e.right);
         return `(${left} ${e.op} ${right})`;
@@ -180,8 +180,9 @@ export default function generate(program) {
       return targetName(i);
     },
 
-    FunctionCall(c) {
-      return `${gen(c.callee)}`;
+    FuncCall(c) {
+      console.log("Call", c);
+      return `${c.name}(${c.arg})`;
     },
 
     GlobalRange(r) {
