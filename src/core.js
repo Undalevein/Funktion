@@ -84,19 +84,19 @@ export function localRange(id, range, timestep = null) {
 }
 
 export function numRange(start, end) {
-  return { type: voidType, kind: "NumRange", start, end };
+  return { type: voidType, kind: "numRange", start, end };
 }
 
 export function charRange(start, end) {
-  return { type: voidType, kind: "CharRange", start, end };
+  return { type: voidType, kind: "charRange", start, end };
 }
 
 export function timestep(value) {
-  return { type: voidType, kind: "Timestep", value };
+  return { type: voidType, kind: "timestep", value };
 }
 
 export function num(value) {
-  return { type: numberType, kind: "Num", value };
+  return { type: numberType, kind: "num", value };
 }
 
 export function stringLiteral(value) {
