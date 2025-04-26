@@ -3,11 +3,11 @@ import { voidType, numberType, stringType, functionType, standardLibrary } from 
 export default function generate(program) {
   const output = [];
   const targetName = ((mapping) => {
-    return (entity) => {
-      if (!mapping.has(entity)) {
-          mapping.set(entity, mapping.size + 1);
+    return (name) => {
+      if (!mapping.has(name)) {
+        mapping.set(name, mapping.size + 1);
       }
-    return `${entity.name}_${mapping.get(entity)}`;
+    return `${name}_${mapping.get(name)}`;
     };
   })(new Map());
 
@@ -51,38 +51,47 @@ export default function generate(program) {
         }
       `);
       if (p.globalRange) {
-        const rangeNode = p.globalRange[0].range;
-        const start = gen(rangeNode.start);
-        const end = gen(rangeNode.end);
-        const step = p.globalRange[0].timestep ? gen(p.globalRange[0].timestep.value) : (start <= end ? 1 : -1);
+        const start = gen(p.globalRange[0].range.start);
+        const end = gen(p.globalRange[0].range.end[0]);
+        const step = p.globalRange[0].timestep ? gen(p.globalRange[0].timestep[0].value) : (start <= end ? 1 : -1);
         output.push(`const globalRange = generateRange(${start}, ${end}, ${step});`);
-      }
+      } 
       else {
         output.push(`const globalRange = [];`);
       }
       p.statements.forEach(gen);
     },
 
+    // FuncDef(d) {
+    //   const funcName = targetName(d);
+    //   const param = d.param;
+    //   output.push(`const ${funcName} = [];`);
+    //   output.push(`let previous_${funcName} = 1;`);
+    //   output.push(`for (const ${param} of globalRange) {`);
+    //   const body = gen(d.body);
+    //   output.push(`  ${funcName}.push(${body});`);
+    //   output.push(`  previous_${funcName} = ${funcName}[${funcName}.length - 1];`);
+    //   output.push(`}`);
+    // },
+
     FuncDef(d) {
-      const funcName = targetName(d);
-      const param = d.param;
-      output.push(`const ${funcName} = [];`);
-      output.push(`let previous_${funcName} = 1;`);
-      output.push(`for (const ${param} of globalRange) {`);
+      const funcName = targetName(d.name);
+      const param = targetName(d.param);
       const body = gen(d.body);
-      output.push(`  ${funcName}.push(${body});`);
-      output.push(`  previous_${funcName} = ${funcName}[${funcName}.length - 1];`);
-      output.push(`}`);;
+      output.push(`function* ${funcName}(${param}) {`);
+      output.push(`  return ${body};`);
+      output.push(`}`);
     },
 
     PrintStmt(s) {
+      console.log(s.expr);
       output.push(`funktionPrint(${gen(s.expr)});`);
     },
 
     StepCall(s) {
       const expr = gen(s.expr);
       const stepValue = s.stepValue ? gen(s.stepValue) : 1;
-      return `${expr}[${stepValue - 1}]`;
+      return `${expr}`;//`${expr}[${stepValue - 1}]`;
     },
 
     Expr(e) {
@@ -90,12 +99,7 @@ export default function generate(program) {
       for (const expr of [e.condExpr, ...e.rest]) {
         exprs.push(gen(expr));
       }
-      // Wrap multiple expressions in a JS array literal
-      if (exprs.length === 1) {
-        return exprs[0];
-      } else {
-        return `[${exprs.join(', ')}]`;
-      }
+      return exprs;
     },
 
     CondExpr(e) {
@@ -137,8 +141,6 @@ export default function generate(program) {
 
     MulExpr(e) {
       if (e.op) {
-        // console.log(gen(e.left));
-        // console.log(gen(e));
         const left = gen(e.left);
         const right = gen(e.right);
         return `(${left} ${e.op} ${right})`;
@@ -174,11 +176,11 @@ export default function generate(program) {
     },
 
     id(i) {
-      return targetName(i);
+      return targetName(i.name);
     },
 
     FuncCall(c) {
-      return `${c.name}(${gen(c.arg)})`;
+      return `${targetName(c.name)}(${targetName(c.arg)})`;
     },
 
     GlobalRange(r) {
