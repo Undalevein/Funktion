@@ -1,5 +1,7 @@
 `5..1` t1t
 
-factorial(x) = x * factorial(x).step()
+factorial(x) = 
+    ? x > 0 => x * factorial(x).step() :
+    1    
 
 print(factorial(x):1)
