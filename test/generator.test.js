@@ -22,7 +22,7 @@ const fixtures = [
         }
       }
       else {
-        for (let i = start; i >= end; i += step) {
+        for (let i = start; i >= end; i -= step) {
           range.push(i);
         }
       }
@@ -59,7 +59,7 @@ const fixtures = [
         }
       }
       else {
-        for (let i = start; i >= end; i += step) {
+        for (let i = start; i >= end; i -= step) {
           range.push(i);
         }
       }
