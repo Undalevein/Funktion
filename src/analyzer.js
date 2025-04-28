@@ -15,7 +15,7 @@ class Context {
   }
 
   lookup(name) {
-    return this.locals.get(name) || this.parent?.lookup(name);
+    return this.locals.get(name) /*|| this.parent?.lookup(name)*/;
   }
 
   static root() {
@@ -249,14 +249,15 @@ export default function analyze(match) {
 
     Factor_negation(op, right) {
       const r = right.rep();
+      console.log(core.factor(op.sourceString, r));
       mustBeTypeUnary(r, core.numberType, { at: op });
-      return core.factor(op.sourceString, r);
+      return core.factor(null, op.sourceString, r);
     },
 
     Factor_bitwisenegation(op, right) {
       const r = right.rep();
       mustBeTypeUnary(r, core.numberType, { at: op });
-      return core.factor(op.sourceString, r);
+      return core.factor(null, op.sourceString, r);
     },
 
     Factor(value) {

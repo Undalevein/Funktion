@@ -58,6 +58,7 @@ const semanticChecks = [
   ["identifiers", "f(x)=x"],
   ["character literals", "f(x)='2'"],
   ["parentheses around a primary", "f(x)=(3)"],
+  ["complicated equation", "f(x) = 1 + (2 + -3) << -4 >> (19 * 39) % x ^ 2 << 38 & 18"],
 ];
 
 // Programs that are syntactically correct but have semantic errors

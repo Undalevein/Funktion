@@ -18,11 +18,11 @@ export function funcCall(name, arg) {
 }
 
 export function functionGroup(expr) {
-  return { type: expr?.type ?? anyType, kind: "FunctionGroup", expr };
+  return { type: expr.type, kind: "FunctionGroup", expr };
 }
 
 export function expr(condExpr, rest = []) {
-  return { type: condExpr?.type ?? anyType, kind: "Expr", condExpr, rest };
+  return { type: condExpr.type, kind: "Expr", condExpr, rest };
 }
 
 export function condExpr(leftCond, op, rightCond, thenBranch, elseBranch) {
@@ -38,27 +38,27 @@ export function condExpr(leftCond, op, rightCond, thenBranch, elseBranch) {
 }
 
 export function bitwiseExpr(left, op, right) {
-  return { type: left?.type ?? anyType, kind: "BitwiseExpr", left, op, right };
+  return { type: left.type, kind: "BitwiseExpr", left, op, right };
 }
 
 export function shiftExpr(left, op, right) {
-  return { type: left?.type ?? anyType, kind: "ShiftExpr", left, op, right };
+  return { type: left.type, kind: "ShiftExpr", left, op, right };
 }
 
 export function addExpr(left, op, right) {
-  return { type: left?.type ?? anyType, kind: "AddExpr", left, op, right };
+  return { type: left.type, kind: "AddExpr", left, op, right };
 }
 
 export function mulExpr(left, op, right) {
-  return { type: left?.type ?? anyType, kind: "MulExpr", left, op, right };
+  return { type: left.type, kind: "MulExpr", left, op, right };
 }
 
 export function factor(base, op, exponent) {
-  return { type: base?.type ?? anyType, kind: "Factor", base, op, exponent };
+  return { type: base?.type ?? exponent.type, kind: "Factor", base, op, exponent };
 }
 
 export function primary(value) {
-  return { type: value?.type ?? anyType, kind: "Primary", value };
+  return { type: value.type, kind: "Primary", value };
 }
 
 export function printStmt(expr) {
