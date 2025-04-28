@@ -155,14 +155,22 @@ export default function analyze(match) {
 
     CondExpr_ternary(
       _question,
-      condition,
-      _newLine,
+      condLeft,
+      op,
+      condRight,
+      _arrow,
       thenBranch,
-      _semicolon,
+      _colon,
+      _newLine,
       elseBranch
     ) {
-      const cond = condition.rep();
-      return core.condExpr(cond, thenBranch.rep(), elseBranch?.rep());
+      return core.condExpr(
+        condLeft.rep(), 
+        op.sourceString, 
+        condRight.rep(), 
+        thenBranch.rep(),
+        elseBranch.rep()
+      );
     },
 
     CondExpr(bitwiseExpr) {

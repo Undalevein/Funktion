@@ -3,8 +3,8 @@ Funktion {
 
   FuncDef        = id "(" id ")" "=" "\n"? Expr (";" (FuncDef | Expr))*
   FuncCall		   = id "(" id ")"
-  Expr           = CondExpr (("," | ":") "\n"? CondExpr)*
-  CondExpr       = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") BitwiseExpr "=>" BitwiseExpr --ternary
+  Expr           = CondExpr ("," "\n"? CondExpr)*
+  CondExpr       = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") CondExpr "=>" BitwiseExpr ":" "\n"? CondExpr --ternary
                  | BitwiseExpr
   BitwiseExpr    = BitwiseExpr ("&" | "|" | "^") ShiftExpr              --binary
                  | ShiftExpr

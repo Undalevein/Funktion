@@ -25,13 +25,15 @@ export function expr(condExpr, rest = []) {
   return { type: condExpr?.type ?? anyType, kind: "Expr", condExpr, rest };
 }
 
-export function condExpr(condition, thenBranch, elseBranch) {
+export function condExpr(leftCond, op, rightCond, thenBranch, elseBranch) {
   return {
     type: thenBranch?.type ?? anyType,
     kind: "CondExpr",
-    condition,
+    leftCond,
+    op,
+    rightCond,
     thenBranch,
-    elseBranch,
+    elseBranch
   };
 }
 

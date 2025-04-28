@@ -51,40 +51,46 @@ export default function generate(program) {
         }
       `);
       if (p.globalRange) {
-        const rangeNode = p.globalRange[0].range;
-        const start = gen(rangeNode.start);
-        const end = gen(rangeNode.end);
-        const rawStep = p.globalRange[0].timestep?.value;
-        const step = rawStep ? gen(rawStep) : start <= end ? 1 : -1;
-        
+        const start = gen(p.globalRange[0].range.start);
+        const end = gen(p.globalRange[0].range.end[0]);
+        const step = p.globalRange[0].timestep ? gen(p.globalRange[0].timestep[0].value) : (start <= end ? 1 : -1);
         output.push(`const globalRange = generateRange(${start}, ${end}, ${step});`);
-      }
+      } 
       else {
         output.push(`const globalRange = [];`);
       }
       p.statements.forEach(gen);
     },
 
+    // FuncDef(d) {
+    //   const funcName = targetName(d);
+    //   const param = d.param;
+    //   output.push(`const ${funcName} = [];`);
+    //   output.push(`let previous_${funcName} = 1;`);
+    //   output.push(`for (const ${param} of globalRange) {`);
+    //   const body = gen(d.body);
+    //   output.push(`  ${funcName}.push(${body});`);
+    //   output.push(`  previous_${funcName} = ${funcName}[${funcName}.length - 1];`);
+    //   output.push(`}`);
+    // },
+
     FuncDef(d) {
-      const funcName = targetName(d.name); // Use function name string
-      const param = d.param;
-      output.push(`const ${funcName} = [];`);
-      output.push(`let previous_${funcName} = 1;`);
-      output.push(`for (const ${param} of globalRange) {`);
-      output.push(`  ${funcName}.push(${param} * previous_${funcName});`);
-      output.push(`  previous_${funcName} = ${funcName}[${funcName}.length - 1];`);
+      const funcName = targetName(d.name);
+      const param = targetName(d.param);
+      const body = gen(d.body);
+      output.push(`function ${funcName}(${param}) {`);
+      output.push(`  return ${body};`);
       output.push(`}`);
     },
 
     PrintStmt(s) {
-      // console.log(s.expr);
       output.push(`funktionPrint(${gen(s.expr)});`);
     },
 
     StepCall(s) {
       const expr = gen(s.expr);
       const stepValue = s.stepValue ? gen(s.stepValue) : 1;
-      return `${expr}[${stepValue - 1}]`;
+      return `${expr}`;//`${expr}[${stepValue - 1}]`;
     },
 
     Expr(e) {
@@ -97,12 +103,14 @@ export default function generate(program) {
 
     CondExpr(e) {
       if (e.thenBranch) {
-        const condition = gen(e.condition);
+        const condleft = gen(e.leftCond);
+        const op = e.op;
+        const condright = gen(e.rightCond);
         const thenBranch = gen(e.thenBranch);
         const elseBranch = gen(e.elseBranch);
-        return `(${condition} ? ${thenBranch} : ${elseBranch})`;
+        return `(${condleft} ${op} ${condright} ? ${thenBranch} : ${elseBranch})`;
       }
-      return gen(e.condition);
+      return gen(e.leftCond);
     },
 
     BitwiseExpr(e) {
@@ -133,10 +141,10 @@ export default function generate(program) {
     },
 
     MulExpr(e) {
-      if (e.op) {
+      if (e.right) {
         const left = gen(e.left);
         const right = gen(e.right);
-        return `(${left} ${e.op} ${right})`;
+        return `(${left} ${e.op || "*"} ${right})`;
       }
       return gen(e.left);
     },
@@ -149,11 +157,15 @@ export default function generate(program) {
       } else if (e.op === '~') {
         return `(~${gen(e.operand)})`;
       }
-      return gen(e.primary);
+      return gen(e.base);
     },
 
     Primary(e) {
       return gen(e.value);
+    },
+
+    TimeCall(e) {
+      return gen(e.funcCall);
     },
 
     num(n) {
@@ -173,7 +185,7 @@ export default function generate(program) {
     },
 
     FuncCall(c) {
-      return `${targetName(c.name)}`;
+      return `${targetName(c.name)}(${targetName(c.arg)})`;
     },
 
     GlobalRange(r) {
@@ -181,7 +193,7 @@ export default function generate(program) {
     },
 
     numRange(r) {
-      return `${gen(r.start)}..${gen(r.end)}`; // Explicitly format range
+      return { start: gen(r.start), end: gen(r.end) };
     },
 
     timestep(t) {
