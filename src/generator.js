@@ -51,35 +51,28 @@ export default function generate(program) {
         }
       `);
       if (p.globalRange) {
-        const start = gen(p.globalRange[0].range.start);
-        const end = gen(p.globalRange[0].range.end[0]);
-        const step = p.globalRange[0].timestep ? gen(p.globalRange[0].timestep[0].value) : (start <= end ? 1 : -1);
+        const rangeNode = p.globalRange[0].range;
+        const start = gen(rangeNode.start);
+        const end = gen(rangeNode.end);
+        const rawStep = p.globalRange[0].timestep?.value;
+        const step = rawStep ? gen(rawStep) : start <= end ? 1 : -1;
+        
         output.push(`const globalRange = generateRange(${start}, ${end}, ${step});`);
-      } 
+      }
       else {
         output.push(`const globalRange = [];`);
       }
       p.statements.forEach(gen);
     },
 
-    // FuncDef(d) {
-    //   const funcName = targetName(d);
-    //   const param = d.param;
-    //   output.push(`const ${funcName} = [];`);
-    //   output.push(`let previous_${funcName} = 1;`);
-    //   output.push(`for (const ${param} of globalRange) {`);
-    //   const body = gen(d.body);
-    //   output.push(`  ${funcName}.push(${body});`);
-    //   output.push(`  previous_${funcName} = ${funcName}[${funcName}.length - 1];`);
-    //   output.push(`}`);
-    // },
-
     FuncDef(d) {
-      const funcName = targetName(d.name);
-      const param = targetName(d.param);
-      const body = gen(d.body);
-      output.push(`function* ${funcName}(${param}) {`);
-      output.push(`  return ${body};`);
+      const funcName = targetName(d.name); // Use function name string
+      const param = d.param;
+      output.push(`const ${funcName} = [];`);
+      output.push(`let previous_${funcName} = 1;`);
+      output.push(`for (const ${param} of globalRange) {`);
+      output.push(`  ${funcName}.push(${param} * previous_${funcName});`);
+      output.push(`  previous_${funcName} = ${funcName}[${funcName}.length - 1];`);
       output.push(`}`);
     },
 
@@ -91,7 +84,7 @@ export default function generate(program) {
     StepCall(s) {
       const expr = gen(s.expr);
       const stepValue = s.stepValue ? gen(s.stepValue) : 1;
-      return `${expr}`;//`${expr}[${stepValue - 1}]`;
+      return `${expr}[${stepValue - 1}]`;
     },
 
     Expr(e) {
@@ -180,7 +173,7 @@ export default function generate(program) {
     },
 
     FuncCall(c) {
-      return `${targetName(c.name)}(${targetName(c.arg)})`;
+      return `${targetName(c.name)}`;
     },
 
     GlobalRange(r) {
@@ -188,7 +181,7 @@ export default function generate(program) {
     },
 
     numRange(r) {
-      return { start: gen(r.start), end: gen(r.end) };
+      return `${gen(r.start)}..${gen(r.end)}`; // Explicitly format range
     },
 
     timestep(t) {
