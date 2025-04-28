@@ -121,7 +121,7 @@ export default function generate(program) {
         const condright = gen(e.rightCond);
         const thenBranch = gen(e.thenBranch);
         const elseBranch = gen(e.elseBranch);
-        return `(${condleft} ${op} ${condright} ? ${thenBranch} : ${elseBranch})`;
+        return `(? ${condleft} ${op} ${condright} => ${thenBranch} : ${elseBranch})`;
       }
       return gen(e.leftCond);
     },
@@ -199,18 +199,6 @@ export default function generate(program) {
 
     FuncCall(c) {
       return `${targetName(c.name)}(${c.arg})`;
-    },
-
-    GlobalRange(r) {
-      return r;
-    },
-
-    numRange(r) {
-      return { start: gen(r.start), end: gen(r.end) };
-    },
-
-    timestep(t) {
-      return t.value;
     }
   };
 

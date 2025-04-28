@@ -45,7 +45,7 @@ const fixtures = [
   {
     name: "factorial",
     source: 
-    `\`5..1\` t-1t
+    `\`5..1\` t1t
     factorial(x) = x * factorial(x).step()
     print(factorial(x))`,
     expected: dedent(`
@@ -251,7 +251,8 @@ const fixtures = [
   },
   {
     name: "conditional operation",
-    source: `print(x > 0 ? 1 : -1)`,
+    source: 
+    `print(? 1 > 0 => 1 : -1)`,
     expected: dedent(`
     function generateRange(start, end, step) {
       const range = [];
@@ -279,7 +280,7 @@ const fixtures = [
     }
     
     const globalRange = [];
-    funktionPrint(? x > 0 => 1 : -1);
+    funktionPrint((? 1 > 0 => 1 : (-1)));
     `),
   },
   {
@@ -462,7 +463,7 @@ const fixtures = [
     const globalRange = [];
     funktionPrint("a");
     `),
-  },
+  }
 ];
 
 describe("The code generator", () => {

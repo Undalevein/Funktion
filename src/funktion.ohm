@@ -31,7 +31,7 @@ Funktion {
   Statement      = PrintStmt
                  | StepCall
                  | InputStmt
-  PrintStmt      = "print" "(" (TimeCall | BitwiseExpr) ")"
+  PrintStmt      = "print" "(" (TimeCall | CondExpr) ")"
   TimeCall       = FuncCall ":" num
   StepCall       =  (FuncCall | FunctionGroup) "." "step" "(" num? ")"
   InputStmt      = "input" "(" stringliteral? ")"

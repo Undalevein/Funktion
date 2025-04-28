@@ -164,10 +164,13 @@ export default function analyze(match) {
       _newLine,
       elseBranch
     ) {
+      const left = condLeft.rep();
+      const right = condRight.rep();
+      mustBeTypeBinary(left, right, { at: op });
       return core.condExpr(
-        condLeft.rep(), 
-        op.sourceString, 
-        condRight.rep(), 
+        left,
+        op.sourceString,
+        right,
         thenBranch.rep(),
         elseBranch.rep()
       );
