@@ -22,6 +22,8 @@ export default function generate(program) {
   //   throw new Error(`No generator for node type: ${node.kind}`);
   // };
 
+  let currentFunction = { name: null, param: null };
+
   const generators = {
     Program(p) {
       output.push(`
@@ -77,10 +79,17 @@ export default function generate(program) {
     FuncDef(d) {
       const funcName = targetName(d.name);
       const param = targetName(d.param);
+      currentFunction.name = funcName;
+      currentFunction.param = param;
+      output.push(`const ${funcName} = [];`);
+      output.push(`let previous_${funcName} = 1;`);
+      output.push(`for (const ${param} of globalRange) {`);
       const body = gen(d.body);
-      output.push(`function ${funcName}(${param}) {`);
-      output.push(`  return ${body};`);
+      output.push(`  ${funcName}.push(${body});`);
+      output.push(`  previous_${funcName} = ${funcName}[${funcName}.length - 1];`);
       output.push(`}`);
+      currentFunction.name = null;
+      currentFunction.param = null;
     },
 
     PrintStmt(s) {
@@ -89,8 +98,12 @@ export default function generate(program) {
 
     StepCall(s) {
       const expr = gen(s.expr);
-      const stepValue = s.stepValue ? gen(s.stepValue) : 1;
-      return `${expr}`;//`${expr}[${stepValue - 1}]`;
+      let stepValue = s.stepValue ? gen(s.stepValue) : 1;
+      stepValue = Number(stepValue) || 1;
+      if (currentFunction.name && expr === `${currentFunction.name}(${currentFunction.param})`) {
+        return `previous_${currentFunction.name}`;
+      }
+      return `${expr}[${stepValue - 1}]`;
     },
 
     Expr(e) {
