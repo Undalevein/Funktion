@@ -43,7 +43,7 @@ const syntaxChecks = [
     "multiple statements on the same line, separate by commas",
     "f(x)=2; g(x)=3; h(x)=4",
   ],
-  ["Commenting", 'print("hi") //This is a comment'],
+  ["commenting", 'print("hi") //This is a comment'],
   ["using input as a function with arithmetic operation", "f(x)=input() + 2"],
 ];
 

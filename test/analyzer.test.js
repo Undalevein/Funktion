@@ -40,7 +40,7 @@ const semanticChecks = [
     "conditional expression with integer types",
     "f(x) = ? 0 == 0 => 2 : ? 1 == 1 => 3 : 4",
   ],
-  ["conditoinals complicated", "f(x) = ? x > 1 => 4, 1: ?x <= 2 => 4"],
+  ["complicated conditionals", "f(x) = ? x > 1 => 1 : ? x <= 2 => 4 : 2"],
   ["chained operators", "f(x)=1+2-3*4/5**6%7"],
   ["function calls", "f(x)=1\nprint(f(x))"],
   ["step call", "f(x)=x\nprint(f(x).step())"],
