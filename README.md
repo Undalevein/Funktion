@@ -364,3 +364,81 @@ InputStmt(_input, _open, prompt, _close) {
   }
   return core.inputStmt(prompt?.rep());
 }
+
+## Generated Code
+This language is also capable of generating JavaScript code!
+
+### Generated "Hello World!" Code
+  name: "hello world",
+    source: `print("Hello, World!")`,
+    expected: dedent(`
+    function generateRange(start, end, step) {
+      const range = [];
+      if (step === 0) step = 1;
+      if (start <= end) {
+        for (let i = start; i <= end; i += step) {
+          range.push(i);
+        }
+      }
+      else {
+        for (let i = start; i >= end; i -= step) {
+          range.push(i);
+        }
+      }
+      return range;
+    }
+
+    function funktionPrint(value) {
+      if (Array.isArray(value)) {
+        console.log(value.join('\\n'));
+      }
+      else {
+        console.log(value);
+      }
+    }
+
+    const globalRange = [];
+    funktionPrint("Hello, World!"); 
+  `)
+
+### Generated Factorial Code
+  name: "factorial",
+    source: 
+    `\`5..1\` t1t
+    factorial(x) = x * factorial(x).step()
+    print(factorial(x))`,
+    expected: dedent(`
+    function generateRange(start, end, step) {
+      const range = [];
+      if (step === 0) step = 1;
+      if (start <= end) {
+        for (let i = start; i <= end; i += step) {
+          range.push(i);
+        }
+      }
+      else {
+        for (let i = start; i >= end; i -= step) {
+          range.push(i);
+        }
+      }
+      return range;
+    }
+
+    function funktionPrint(value) {
+      if (Array.isArray(value)) {
+        console.log(value.join('\\n'));
+      }
+      else {
+        console.log(value);
+      }
+    }
+
+    const globalRange = generateRange(5, 1, 1);
+    const factorial_1 = [];
+    let previous_factorial_1 = 1;
+    for (const x of globalRange) {
+      factorial_1.push((x * previous_factorial_1));
+      previous_factorial_1 = factorial_1[factorial_1.length - 1];
+    }
+    funktionPrint(factorial_1(x));
+    `)
