@@ -64,8 +64,9 @@ export default function analyze(match) {
       at
     );
     must(
-      (e1.type === type || e1.type === core.anyType) &&
-        (e2.type === type || e2.type === core.anyType),
+      e1.type === type && e2.type === type ||
+        e1.type === core.anyType ||
+        e2.type === core.anyType,
       `Operator does not support ${e1.type} types. Expected ${type}`,
       at
     );
@@ -138,7 +139,7 @@ export default function analyze(match) {
         close.sourceString;
       const func = context.lookup(functionId);
       mustHaveBeenFound(func, id.sourceString, { at: id });
-      return core.funcCall(id.sourceString);
+      return core.funcCall(id.sourceString, arg.sourceString);
     },
 
     FunctionGroup(_open, expr, _close) {
@@ -222,10 +223,7 @@ export default function analyze(match) {
 
     MulExpr_mul(left, right) {
       const l = left.rep();
-      const r = right.rep();
-      console.log("One: ", l);
-      console.log("Two: ", r);
-      mustBeTypeBinary(l, r, core.numberType, { at: right });
+      const r = right.sourceString;
       return core.mulExpr(l, "*", r);
     },
 
@@ -251,6 +249,14 @@ export default function analyze(match) {
       const r = right.rep();
       mustBeTypeUnary(r, core.numberType, { at: op });
       return core.factor(op.sourceString, r);
+    },
+
+    Factor(value) {
+      return core.factor(value.rep());
+    },
+
+    Primary_parens(_open, expr,_close) {
+      return core.primary(expr.rep());
     },
 
     Primary(value) {
@@ -284,9 +290,9 @@ export default function analyze(match) {
       return core.globalRange(range.rep(), timestep?.rep());
     },
 
-    LocalRange(_open, id, _close, range, timestep) {
-      return core.localRange(id.sourceString, range.rep(), timestep?.rep());
-    },
+    // LocalRange(_open, id, _close, range, timestep) {
+    //   return core.localRange(id.sourceString, range.rep(), timestep?.rep());
+    // },
 
     numrange(_open, start, _dots, end, _close) {
       return core.numRange(start?.rep(), end?.rep());
