@@ -37,7 +37,7 @@ Funktion {
   InputStmt      = "input" "(" stringliteral? ")"
 
   GlobalRange    = range timestep?
-  LocalRange     = "[" id "]:" range timestep?
+  //LocalRange     = "[" id "]:" range timestep?
   FunctionGroup  = "{" Expr "}"
   
   numrange       = "`" num ".." (num)? "`"

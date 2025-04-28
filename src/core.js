@@ -79,9 +79,9 @@ export function globalRange(range, timestep = null) {
   return { type: voidType, kind: "GlobalRange", range, timestep };
 }
 
-export function localRange(id, range, timestep = null) {
-  return { type: voidType, kind: "LocalRange", id, range, timestep };
-}
+// export function localRange(id, range, timestep = null) {
+//   return { type: voidType, kind: "LocalRange", id, range, timestep };
+// }
 
 export function numRange(start, end) {
   return { type: voidType, kind: "numRange", start, end };
@@ -108,7 +108,7 @@ export function charLiteral(value) {
 }
 
 export function id(name) {
-  return { type: anyType, kind: "Id", name };
+  return { type: anyType, kind: "id", name };
 }
 
 export const standardLibrary = Object.freeze({
