@@ -84,7 +84,7 @@ export default function generate(program) {
     },
 
     PrintStmt(s) {
-      console.log(s.expr);
+      // console.log(s.expr);
       output.push(`funktionPrint(${gen(s.expr)});`);
     },
 
