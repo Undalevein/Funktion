@@ -7,7 +7,7 @@ export default function generate(program) {
       if (!mapping.has(name)) {
         mapping.set(name, mapping.size + 1);
       }
-    return `${name}_${mapping.get(name)}`;
+      return `${name}_${mapping.get(name)}`;
     };
   })(new Map());
 
@@ -78,7 +78,7 @@ export default function generate(program) {
 
     FuncDef(d) {
       const funcName = targetName(d.name);
-      const param = targetName(d.param);
+      const param = d.param;
       currentFunction.name = funcName;
       currentFunction.param = param;
       output.push(`const ${funcName} = [];`);
@@ -166,9 +166,9 @@ export default function generate(program) {
       if (e.op === '**') {
         return `Math.pow(${gen(e.base)}, ${gen(e.exponent)})`;
       } else if (e.op === '-') {
-        return `(-${gen(e.operand)})`;
+        return `(-${gen(e.exponent)})`;
       } else if (e.op === '~') {
-        return `(~${gen(e.operand)})`;
+        return `(~${gen(e.exponent)})`;
       }
       return gen(e.base);
     },
@@ -194,11 +194,11 @@ export default function generate(program) {
     },
 
     id(i) {
-      return targetName(i.name);
+      return i.name;
     },
 
     FuncCall(c) {
-      return `${targetName(c.name)}(${targetName(c.arg)})`;
+      return `${targetName(c.name)}(${c.arg})`;
     },
 
     GlobalRange(r) {

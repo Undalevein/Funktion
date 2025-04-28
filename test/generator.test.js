@@ -47,8 +47,7 @@ const fixtures = [
     source: 
     `\`5..1\` t-1t
     factorial(x) = x * factorial(x).step()
-    print(factorial(x))
-    `,
+    print(factorial(x))`,
     expected: dedent(`
     function generateRange(start, end, step) {
       const range = [];
@@ -75,14 +74,14 @@ const fixtures = [
       }
     }
 
-    const globalRange = generateRange(5, 1, -1);
+    const globalRange = generateRange(5, 1, 1);
     const factorial_1 = [];
     let previous_factorial_1 = 1;
     for (const x of globalRange) {
-      factorial_1.push(x * previous_factorial_1);
+      factorial_1.push((x * previous_factorial_1));
       previous_factorial_1 = factorial_1[factorial_1.length - 1];
     }
-    funktionPrint(factorial_1);
+    funktionPrint(factorial_1(x));
     `),
 	},
   {
@@ -113,6 +112,7 @@ const fixtures = [
         console.log(value);
       }
     }
+    
     const globalRange = [];
     funktionPrint((1 + (2 * 3)));
     `)
@@ -145,6 +145,7 @@ const fixtures = [
         console.log(value);
       }
     }
+    
     const globalRange = [];
     funktionPrint((5 & 3));
     `)
@@ -177,6 +178,7 @@ const fixtures = [
         console.log(value);
       }
     }
+    
     const globalRange = [];
     funktionPrint((4 << 1));
     `)
@@ -209,6 +211,7 @@ const fixtures = [
         console.log(value);
       }
     }
+    
     const globalRange = [];
     funktionPrint((5 % 2));
     `)
@@ -241,9 +244,43 @@ const fixtures = [
         console.log(value);
       }
     }
+    
     const globalRange = [];
     funktionPrint(Math.pow(2, 3));
     `)
+  },
+  {
+    name: "conditional operation",
+    source: `print(x > 0 ? 1 : -1)`,
+    expected: dedent(`
+    function generateRange(start, end, step) {
+      const range = [];
+      if (step === 0) step = 1;
+      if (start <= end) {
+        for (let i = start; i <= end; i += step) {
+          range.push(i);
+        }
+      }
+      else {
+        for (let i = start; i >= end; i -= step) {
+          range.push(i);
+        }
+      }
+      return range;
+    }
+
+    function funktionPrint(value) {
+      if (Array.isArray(value)) {
+        console.log(value.join('\\n'));
+      }
+      else {
+        console.log(value);
+      }
+    }
+    
+    const globalRange = [];
+    funktionPrint(? x > 0 => 1 : -1);
+    `),
   },
   {
     name: "unary negation",
@@ -273,13 +310,48 @@ const fixtures = [
         console.log(value);
       }
     }
+    
     const globalRange = [];
     funktionPrint((-1));
     `)
   },
   {
+    name: "bitwise negation",
+    source: `print(~1)`,
+    expected: dedent(`
+    function generateRange(start, end, step) {
+      const range = [];
+      if (step === 0) step = 1;
+      if (start <= end) {
+        for (let i = start; i <= end; i += step) {
+          range.push(i);
+        }
+      }
+      else {
+        for (let i = start; i >= end; i -= step) {
+          range.push(i);
+        }
+      }
+      return range;
+    }
+
+    function funktionPrint(value) {
+      if (Array.isArray(value)) {
+        console.log(value.join('\\n'));
+      }
+      else {
+        console.log(value);
+      }
+    }
+    
+    const globalRange = [];
+    funktionPrint((~1));
+    `)
+  },
+  {
     name: "function with step",
-    source: `f(x) = x + 1
+    source: 
+    `f(x) = x + 1
     print(f(x).step(1))`,
     expected: dedent(`
     function generateRange(start, end, step) {
@@ -306,6 +378,7 @@ const fixtures = [
         console.log(value);
       }
     }
+
     const globalRange = [];
     const f_1 = [];
     let previous_f_1 = 1;
@@ -313,9 +386,83 @@ const fixtures = [
       f_1.push((x + 1));
       previous_f_1 = f_1[f_1.length - 1];
     }
-    funktionPrint(f_1[0]);
+    funktionPrint(f_1(x)[0]);
     `)
-  }
+  },
+  {
+    name: "time call",
+    source: 
+    `f(x) = 5
+    print(f(x) : 10)`,
+    expected: dedent(`
+    function generateRange(start, end, step) {
+      const range = [];
+      if (step === 0) step = 1;
+      if (start <= end) {
+        for (let i = start; i <= end; i += step) {
+          range.push(i);
+        }
+      }
+      else {
+        for (let i = start; i >= end; i -= step) {
+          range.push(i);
+        }
+      }
+      return range;
+    }
+
+    function funktionPrint(value) {
+      if (Array.isArray(value)) {
+        console.log(value.join('\\n'));
+      }
+      else {
+        console.log(value);
+      }
+    }
+
+    const globalRange = [];
+    const f_1 = [];
+    let previous_f_1 = 1;
+    for (const x of globalRange) {
+      f_1.push(5);
+      previous_f_1 = f_1[f_1.length - 1];
+    }
+    funktionPrint(f_1(x));
+    `),
+  },
+  {
+    name: "char literal",
+    source: `print('a')`,
+    expected: dedent(`
+    function generateRange(start, end, step) {
+      const range = [];
+      if (step === 0) step = 1;
+      if (start <= end) {
+        for (let i = start; i <= end; i += step) {
+          range.push(i);
+        }
+      }
+      else {
+        for (let i = start; i >= end; i -= step) {
+          range.push(i);
+        }
+      }
+      return range;
+    }
+
+    function funktionPrint(value) {
+      if (Array.isArray(value)) {
+        console.log(value.join('\\n'));
+      }
+      else {
+        console.log(value);
+      }
+    }
+
+    const globalRange = [];
+    funktionPrint("a");
+    `),
+  },
 ];
 
 describe("The code generator", () => {
