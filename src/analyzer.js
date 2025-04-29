@@ -252,7 +252,6 @@ export default function analyze(match) {
 
     Factor_negation(op, right) {
       const r = right.rep();
-      console.log(core.factor(op.sourceString, r));
       mustBeTypeUnary(r, core.numberType, { at: op });
       return core.factor(null, op.sourceString, r);
     },

@@ -121,7 +121,7 @@ export default function generate(program) {
         const condright = gen(e.rightCond);
         const thenBranch = gen(e.thenBranch);
         const elseBranch = gen(e.elseBranch);
-        return `(? ${condleft} ${op} ${condright} => ${thenBranch} : ${elseBranch})`;
+        return `( ${condleft} ${op} ${condright} ? ${thenBranch} : ${elseBranch})`;
       }
       return gen(e.leftCond);
     },

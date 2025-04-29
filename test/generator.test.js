@@ -280,7 +280,7 @@ const fixtures = [
     }
     
     const globalRange = [];
-    funktionPrint((? 1 > 0 => 1 : (-1)));
+    funktionPrint(( 1 > 0 ? 1 : (-1)));
     `),
   },
   {
