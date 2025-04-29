@@ -82,6 +82,8 @@ Each string is wrapped in double quotation marks.
 
 #### Relational Operators
 
+These operators can only be used inside the Chain of Questioning operator (more information below).
+
 | **Operator** | **Description**        | **Example** |
 | ------------ | ---------------------- | ----------- |
 | `==`         | Equals                 | `9 == 9`    |
@@ -96,6 +98,7 @@ Each string is wrapped in double quotation marks.
 | **Operator** | **Description**      | **Example**     |
 | ------------ | -------------------- | --------------- |
 | `+`          | String Concatenation | `"Hi" + " Joe"` |
+| `? => `      | Chain of Reasoning   | `? x == 0 => 3` |
 
 ---
 
@@ -138,12 +141,12 @@ Syntax-wise, it is similar to the examples above.
 - `` `0..10` `` is the same as `` `0..10 t1t` `` (syntax sugar)
 - `` `0..10 t0.2t` `` → `0 0.2 0.4 0.6 0.8 ... 9.6 9.8 10`
 
-##### Local Scope
+<!-- ##### Local Scope
 
 - `` [x]:`0.2..1.0` ``
 - `` [y]:`0..5 t1t` ``
 
-If a local scope exceeds the bounds of a given global scope, the program will let the function continue to generate until the program's global scope is reached or passed.
+If a local scope exceeds the bounds of a given global scope, the program will let the function continue to generate until the program's global scope is reached or passed. -->
 
 ---
 
@@ -175,7 +178,7 @@ This will step through both `G` and `f` by `x`'s step value, while also making t
 
 ### Chain of Questioning
 
-In Funktion, the **chain of questioning** allows you to perform a series of conditional checks using consecutive `?` symbols. Each `?` represents a case to be checked, and the `:` symbol represents the "else" condition.
+In Funktion, the **chain of questioning** opereator allows you to perform a series of conditional checks using consecutive `?` symbols. Each `?` represents a case to be checked, and the `:` symbol represents the "else" condition.
 
 #### Syntax:
 
@@ -187,8 +190,6 @@ In Funktion, the **chain of questioning** allows you to perform a series of cond
 ```
 
 ---
-
-### Consecutive Action Operator
 
 ### Consecutive Action Operator (`,`)
 
@@ -314,20 +315,25 @@ This language also implements static checks to ensure that there are no grammati
 ### Identifier ${name} already declared
 A function that is already declared cannot be declared again in the same code
 
+```js
 function mustNotAlreadyBeDeclared(name, at) {
   must(!context.lookup(name), `Identifier ${name} already declared`, at);
 }
+```
 
 ### Identifier ${name} not declared
 A function that is not declared cannot be called in the code
 
+```js
 function mustHaveBeenFound(entity, name, at) {
   must(entity, `Identifier ${name} not declared`, at);
 }
+```
 
 ### Operator does not support ${e1.type} types. Expected ${type}
 An operator must be a type that is supported by the language
 
+```js
 function mustBeTypeUnary(e1, type, at) {
   must(
     e1.type === type || e1.type === core.anyType,
@@ -335,10 +341,12 @@ function mustBeTypeUnary(e1, type, at) {
     at
   );
 }
+```
 
 ### Operands do not have the same type. Given ${e1.type} and ${e2.type} types
 When 2 operators are used in the same operation, they must be the same type and a type supported by the language
 
+```js
 function mustBeTypeBinary(e1, e2, type, at) {
   must(
     e1.type === e2.type ||
@@ -354,91 +362,67 @@ function mustBeTypeBinary(e1, e2, type, at) {
     at
   );
 }
+```
 
 ### Input statements must be inside functions
 When an input statement is used, it must be written as a function in the code
 
+```js
 InputStmt(_input, _open, prompt, _close) {
   if (!context.parent) {
     throw new Error("Input statements must be inside functions");
   }
   return core.inputStmt(prompt?.rep());
 }
+```
 
 ## Generated Code
 This language is also capable of generating JavaScript code!
 
+### Transpiled Function
+These functions will always appear in the transpiled JavaScript code regardless what file is being translated. These functions are used as Funktion has completely 
+
+```js
+function generateRange(start, end, step) {
+  const range = [];
+  if (step === 0) step = 1;
+  if (start <= end) {
+    for (let i = start; i <= end; i += step) {
+      range.push(i);
+    }
+  }
+  else {
+    for (let i = start; i >= end; i -= step) {
+      range.push(i);
+    }
+  }
+  return range;
+}
+
+function funktionPrint(value) {
+  if (Array.isArray(value)) {
+    console.log(value.join('\\n'));
+  }
+  else {
+    console.log(value);
+  }
+}
+```
+
 ### Generated "Hello World!" Code
-  name: "hello world",
-    source: `print("Hello, World!")`,
-    expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
-        }
-      }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
-        }
-      }
-      return range;
-    }
-
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
-
-    const globalRange = [];
-    funktionPrint("Hello, World!"); 
-  `)
+```js
+  const globalRange = [];
+  funktionPrint("Hello, World!"); 
+```
 
 ### Generated Factorial Code
-  name: "factorial",
-    source: 
-    `\`5..1\` t1t
-    factorial(x) = x * factorial(x).step()
-    print(factorial(x))`,
-    expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
-        }
-      }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
-        }
-      }
-      return range;
-    }
-
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
-
-    const globalRange = generateRange(5, 1, 1);
-    const factorial_1 = [];
-    let previous_factorial_1 = 1;
-    for (const x of globalRange) {
-      factorial_1.push((x * previous_factorial_1));
-      previous_factorial_1 = factorial_1[factorial_1.length - 1];
-    }
-    funktionPrint(factorial_1(x));
-    `)
+```js
+  const globalRange = generateRange(5, 1, 1);
+  const factorial_1 = [];
+  let previous_factorial_1 = 1;
+  for (const x of globalRange) {
+    factorial_1.push((x * previous_factorial_1));
+    previous_factorial_1 = factorial_1[factorial_1.length - 1];
+  }
+  funktionPrint(factorial_1(x));
+```
