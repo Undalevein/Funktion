@@ -85,6 +85,158 @@ const tests = [
     condExpr(num(1), "!=", num(1), num(10), num(20)),
     num(20),
   ],
+  [
+    "optimizes x - 0 to x",
+    add(id("x"), "-", num(0)),
+    id("x"),
+  ],
+  [
+    "folds subtraction",
+    add(num(8), "-", num(3)),
+    num(5),
+  ],
+  [
+    "optimizes x / 1 to x",
+    mul(id("x"), "/", num(1)),
+    id("x"),
+  ],
+  [
+    "optimizes conditional with <",
+    condExpr(num(3), "<", num(5), num(10), num(20)),
+    num(10),
+  ],
+  [
+    "optimizes conditional with >=",
+    condExpr(num(5), ">=", num(5), num(10), num(20)),
+    num(10),
+  ],
+  [
+    "optimizes conditional with > operator (false)",
+    condExpr(num(3), ">", num(5), num(10), num(20)),
+    num(20),
+  ],
+  [
+    "optimizes conditional with <= operator (true)",
+    condExpr(num(5), "<=", num(5), num(10), num(20)),
+    num(10),
+  ],
+  [
+    "optimizes x - 0 to x with subtraction",
+    add(id("x"), "-", num(0)),
+    id("x"),
+  ],
+  [
+    "optimizes division by 1",
+    mul(id("x"), "/", num(1)),
+    id("x"),
+  ],
+  [
+    "does not optimize negation of identifier",
+    core.factor(null, "-", id("x")),
+    core.factor(null, "-", id("x")),
+  ],
+  [
+    "does not optimize bitwise not of identifier",
+    core.factor(null, "~", id("x")),
+    core.factor(null, "~", id("x")),
+  ],
+  [
+    "optimizes print statement expression",
+    core.printStmt(add(num(2), "+", num(3))),
+    core.printStmt(num(5)),
+  ],
+  [
+    "optimizes step call arguments",
+    core.stepCall(add(num(1), "+", num(2)), num(3)),
+    core.stepCall(num(3), num(3)),
+  ],
+  [
+    "optimizes time call components",
+    core.timeCall(
+      core.funcCall("f", add(num(2), "+", num(3))),
+      add(num(1), "+", num(1))
+    ),
+    core.timeCall(core.funcCall("f", num(5)), num(2)),
+  ],
+  [
+    "returns identical ids",
+    id("x"),
+    id("x"),
+  ],
+  [
+    "optimizes program with global range and statements",
+    core.program (
+      core.globalRange(core.numRange(num(1))),
+      [
+        core.printStmt(num(5)),
+        core.funcDef("f", "x", add(num(1), "+", num(2)), [])
+      ]
+    ),
+    core.program(
+      core.globalRange(core.numRange(num(1))),
+      [
+        core.printStmt(num(5)),
+        core.funcDef("f", "x", num(3), [])
+      ]
+    ),
+  ],
+  [
+    "optimizes function with additional definitions",
+    core.funcDef("f", "x", 
+      core.expr(num(5)),
+      [
+        core.funcDef("g", "y", add(num(2), "+", num(3)), [])
+      ]
+    ),
+    core.funcDef("f", "x", 
+      core.expr(num(5)),
+      [
+        core.funcDef("g", "y", num(5), [])
+      ]
+    ),
+  ],
+  [
+    "optimizes expression with multiple parts",
+    core.expr(
+      condExpr(num(1), "==", num(1), num(10), num(20)),
+      [add(num(1), "+", num(1)), num(3)]
+    ),
+    core.expr(num(10), [num(2), num(3)])
+  ],
+  [
+    "handles unoptimizable global range",
+    core.globalRange(
+      core.numRange(id("start")), 
+      core.timestep(id("step"))
+    ),
+    core.globalRange(
+      core.numRange(id("start")), 
+      core.timestep(id("step"))
+    ),
+  ],
+  [
+    "returns unoptimized print statement",
+    core.printStmt(id("x")),
+    core.printStmt(id("x"))
+  ],
+  [
+    "optimizes nested expressions in numrange start/end",
+    core.numRange(
+      add(num(2), "+", num(3)),
+      mul(num(4), "*", num(2))
+    ),
+    core.numRange(num(5), num(8)),
+  ],
+  [
+    "handles numrange with only start value",
+    core.numRange(num(5)),
+    core.numRange(num(5)), 
+  ],
+  [
+    "returns string literals unchanged",
+    core.stringLiteral("test"),
+    core.stringLiteral("test"),
+  ],
 ];
 
 describe("The optimizer", () => {
