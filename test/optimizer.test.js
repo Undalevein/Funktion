@@ -220,17 +220,19 @@ const tests = [
     core.printStmt(id("x"))
   ],
   [
-    "optimizes nested expressions in numrange start/end",
-    core.numRange(
-      add(num(2), "+", num(3)),
-      mul(num(4), "*", num(2))
-    ),
-    core.numRange(num(5), num(8)),
+    "returns unoptimized conditional with non-numeric operands",
+    condExpr(id("a"), "==", id("b"), num(10), num(20)),
+    condExpr(id("a"), "==", id("b"), num(10), num(20)),
   ],
   [
-    "handles numrange with only start value",
-    core.numRange(num(5)),
-    core.numRange(num(5)), 
+    "returns unoptimized addition with non-numeric operands",
+    add(id("x"), "+", id("y")),
+    add(id("x"), "+", id("y")),
+  ],
+  [
+    "returns unoptimized multiplication with non-numeric operands",
+    mul(id("x"), "*", id("y")),
+    mul(id("x"), "*", id("y")),
   ],
 ];
 

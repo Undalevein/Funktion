@@ -44,7 +44,6 @@ const optimizers = {
         case '<=': result = left <= right; break;
         case '>': result = left > right; break;
         case '>=': result = left >= right; break;
-        default: return e;
       }
       return result ? e.thenBranch : e.elseBranch;
     }
@@ -124,12 +123,6 @@ const optimizers = {
     g.range = optimize(g.range);
     g.timestep = optimize(g.timestep);
     return g;
-  },
-
-  numrange(nr) {
-    nr.start = optimize(nr.start);
-    nr.end = optimize(nr.end);
-    return nr;
   },
 
   num(n) {
