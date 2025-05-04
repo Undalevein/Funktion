@@ -129,21 +129,11 @@ const optimizers = {
   numrange(nr) {
     nr.start = optimize(nr.start);
     nr.end = optimize(nr.end);
-    if (nr.start?.kind === 'AddExpr' && nr.start.left?.kind === 'num' && nr.start.right?.kind === 'num') {
-      nr.start = core.num(eval(`${nr.start.left.value} ${nr.start.op} ${nr.start.right.value}`));
-    }
-    if (nr.end?.kind === 'MulExpr' && nr.end.left?.kind === 'num' && nr.end.right?.kind === 'num') {
-      nr.end = core.num(eval(`${nr.end.left.value} ${nr.end.op} ${nr.end.right.value}`));
-    }
     return nr;
   },
 
   num(n) {
     return n;
-  },
-
-  stringliteral(s) {
-    return s;
   },
 
   id(i) {

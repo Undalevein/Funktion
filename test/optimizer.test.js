@@ -232,11 +232,6 @@ const tests = [
     core.numRange(num(5)),
     core.numRange(num(5)), 
   ],
-  [
-    "returns string literals unchanged",
-    core.stringLiteral("test"),
-    core.stringLiteral("test"),
-  ],
 ];
 
 describe("The optimizer", () => {
