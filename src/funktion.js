@@ -8,19 +8,43 @@ const help = `Funktion compiler
 
 Syntax: funktion <filename> <outputType>
 
-Prints to stdout according to <outputType>, which must be one of:
+Available compiler phases (outputType):
+  parsed     - Show raw parser output
+  analyzed   - Display analyzed AST
+  optimized  - Show optimized AST
+  js         - Generate JavaScript code
 
-  parsed     a message that the program was matched ok by the grammar
-  analyzed   the statically analyzed representation
-  optimized  the optimized semantically analyzed representation
-  js         the translation to JavaScript
+Or run individual phases:
+  parse      - Only run the parser
+  analyze    - Run parser + analyzer
+  optimize   - Run up to optimizer
+  generate   - Full compilation pipeline
 `;
 
+// Modify the compileFromFile function
 async function compileFromFile(filename, outputType) {
   try {
     const buffer = await fs.readFile(filename);
-    const compiled = compile(buffer.toString(), outputType);
-    console.log(stringify(compiled, "kind") || compiled);
+    let result;
+    
+    switch(outputType.toLowerCase()) {
+      case 'parse':
+        result = parse(buffer.toString());
+        break;
+      case 'analyze':
+        result = analyze(parse(buffer.toString()));
+        break;
+      case 'optimize':
+        result = optimize(analyze(parse(buffer.toString())));
+        break;
+      case 'generate':
+        result = generate(optimize(analyze(parse(buffer.toString()))));
+        break;
+      default: // Maintain original output types
+        result = compile(buffer.toString(), outputType);
+    }
+    
+    console.log(stringify(result, "kind") || result);
   } catch (e) {
     console.error(`\u001b[31m${e}\u001b[39m`);
     process.exitCode = 1;
