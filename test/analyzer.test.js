@@ -45,7 +45,7 @@ const semanticChecks = [
   ["function calls", "f(x)=1\nprint(f(x))"],
   ["step call", "f(x)=x\nprint(f(x).step())"],
   ["step call with specified number", "f(x)=x\nprint(f(x).step(4))"],
-  ["time call", "f(x)=x\nprint(f(x):5)"],
+  ["time call", "f(x)=x\nprint(x:5)"],
   ["global range in increasing range", "`1..3`\n"],
   ["global range in decreasing range", "`1..-4`\n"],
   ["global range with positive integer time step", "`1..10` t2t\n"],

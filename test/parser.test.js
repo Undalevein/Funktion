@@ -14,7 +14,7 @@ const syntaxChecks = [
   ["function name containing a keyword", "printe(x)=2"],
   ["function with 2x", "f(x)=2x"],
   ["function call through step", "f(x).step(3)"],
-  ["function call through colon", "print(f(x):2)"],
+  ["variable with colon", "print(x:2)"],
   ["function call with multiple steps", "{G(x) + f(x)}.step(2)"],
   ["print statement", 'print("Hello, World!")'],
   ["print statement with special characters", 'print("\\n\\t\\r\\b\\\\\\"")'],

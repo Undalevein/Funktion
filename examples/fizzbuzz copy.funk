@@ -1,0 +1,10 @@
+`15..1` t1t
+
+fizzbuzz(x) =
+    ? x % 15 == 0 => "fizzbuzz":
+    ? x % 3 == 0 => "fizz":
+    ? x % 5 == 0 => "buzz":
+    x
+
+fizzbuzz(x).step(15)
+print(x)

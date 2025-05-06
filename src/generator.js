@@ -13,83 +13,91 @@ export default function generate(program) {
 
   const gen = node => generators?.[node?.kind]?.(node) ?? node
 
-  // const gen = (node) => {
-  //   if (!node) return '';
-  //   const handler = generators[node.kind];
-  //   if (handler) {
-  //     return handler(node);
-  //   }
-  //   throw new Error(`No generator for node type: ${node.kind}`);
-  // };
+  const instantiatedMutableRanges = []
 
-  let currentFunction = { name: null, param: null };
+  // let currentFunction = { name: null, param: null };
 
   const generators = {
     Program(p) {
+      /**
+       * Standard generator code used in every file.
+       */
+      const range = p.globalRange?.[0]?.range;
+      const timestep = p.globalRange?.[0]?.timestep?.[0];
+      const start = range ? gen(range.start) : 1;
+      const end = range ? gen(range.end[0]) : 5;
+      const step = timestep ? gen(timestep.value) :
+                   start <= end ? 1 : -1;
       output.push(`
-        function generateRange(start, end, step) {
-          const range = [];
-          if (step === 0) step = 1;
-          if (start <= end) {
-            for (let i = start; i <= end; i += step) {
-              range.push(i);
-            }
-          }
-          else {
-            for (let i = start; i >= end; i -= step) {
-              range.push(i);
-            }
-          }
-          return range;
+        function generateRange(start = ${start}, end = ${end}, step = ${step}) {
+          if (end < start) step *= -1;
+          return {
+            start,
+            end,
+            step
+          };
+        }
+
+        function initializeMutableRange(timestepRange = generateRange()) {
+          return {
+            timestepRange,
+            values: [],
+            index: -1,
+            size: 0
+          };
         }
 
         function funktionPrint(value) {
           if (Array.isArray(value)) {
             console.log(value.join('\\n'));
+          } 
+          else if (typeof value === "object") {
+            console.log(value.values.join('\\n'));
           }
           else {
             console.log(value);
           }
         }
+
+        function applyFunction(gen, iterations, f) {
+          let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+          if (gen.size === 0) {
+            gen.size++;
+            gen.index++;
+            gen.values.push(f(currentVal));
+            currentVal += gen.timestepRange.step;
+          }
+          if (gen.timestepRange.step > 0) {
+            while (currentVal <= gen.timestepRange.end && iterations > 0) {
+              gen.size++;
+              gen.index++;
+              gen.values.push(f(currentVal));
+              currentVal += gen.timestepRange.step;
+              iterations--;
+            }
+          } else {
+            while (currentVal >= gen.timestepRange.end && iterations > 0) {
+              gen.size++;
+              gen.index++;
+              gen.values.push(f(currentVal));
+              currentVal += gen.timestepRange.step;
+              iterations--;
+            }
+          }
+        }
       `);
-      if (p.globalRange) {
-        const start = gen(p.globalRange[0].range.start);
-        const end = gen(p.globalRange[0].range.end[0]);
-        const step = p.globalRange[0].timestep ? gen(p.globalRange[0].timestep[0].value) : (start <= end ? 1 : -1);
-        output.push(`const globalRange = generateRange(${start}, ${end}, ${step});`);
-      } 
-      else {
-        output.push(`const globalRange = [];`);
-      }
       p.statements.forEach(gen);
     },
 
-    // FuncDef(d) {
-    //   const funcName = targetName(d);
-    //   const param = d.param;
-    //   output.push(`const ${funcName} = [];`);
-    //   output.push(`let previous_${funcName} = 1;`);
-    //   output.push(`for (const ${param} of globalRange) {`);
-    //   const body = gen(d.body);
-    //   output.push(`  ${funcName}.push(${body});`);
-    //   output.push(`  previous_${funcName} = ${funcName}[${funcName}.length - 1];`);
-    //   output.push(`}`);
-    // },
-
     FuncDef(d) {
       const funcName = targetName(d.name);
-      const param = d.param;
-      currentFunction.name = funcName;
-      currentFunction.param = param;
-      output.push(`const ${funcName} = [];`);
-      output.push(`let previous_${funcName} = 1;`);
-      output.push(`for (const ${param} of globalRange) {`);
+      const param = targetName(d.param);
       const body = gen(d.body);
-      output.push(`  ${funcName}.push(${body});`);
-      output.push(`  previous_${funcName} = ${funcName}[${funcName}.length - 1];`);
-      output.push(`}`);
-      currentFunction.name = null;
-      currentFunction.param = null;
+      const lastStmt = body.pop();
+      output.push(`function ${funcName}(${param}) {\n${body}\nreturn ${lastStmt};\n} `);
+      if (instantiatedMutableRanges.indexOf(param) === -1) {
+        output.push(`let ${param} = initializeMutableRange();`);
+      }
     },
 
     PrintStmt(s) {
@@ -98,12 +106,9 @@ export default function generate(program) {
 
     StepCall(s) {
       const expr = gen(s.expr);
-      let stepValue = s.stepValue ? gen(s.stepValue) : 1;
-      stepValue = Number(stepValue) || 1;
-      if (currentFunction.name && expr === `${currentFunction.name}(${currentFunction.param})`) {
-        return `previous_${currentFunction.name}`;
-      }
-      return `${expr}[${stepValue - 1}]`;
+      const stepValue = gen(s.stepValue);
+      const arg = targetName(s.expr.arg);
+      output.push(`applyFunction(${arg}, ${stepValue}, ${expr});`);
     },
 
     Expr(e) {
@@ -117,7 +122,9 @@ export default function generate(program) {
     CondExpr(e) {
       if (e.thenBranch) {
         const condleft = gen(e.leftCond);
-        const op = e.op;
+        const op = e.op === "==" ? "===" : 
+                   e.op === "!=" ? "!==" :
+                   e.op;
         const condright = gen(e.rightCond);
         const thenBranch = gen(e.thenBranch);
         const elseBranch = gen(e.elseBranch);
@@ -178,7 +185,7 @@ export default function generate(program) {
     },
 
     TimeCall(e) {
-      return gen(e.funcCall);
+      return `${gen(e.id)}.values.slice(0, ${gen(e.timeValue)})`;
     },
 
     num(n) {
@@ -194,11 +201,11 @@ export default function generate(program) {
     },
 
     id(i) {
-      return i.name;
+      return targetName(i.name);
     },
 
     FuncCall(c) {
-      return `${targetName(c.name)}(${c.arg})`;
+      return `${targetName(c.name)}`;
     }
   };
 

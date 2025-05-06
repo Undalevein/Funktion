@@ -73,8 +73,8 @@ export function inputStmt(prompt) {
   return { type: anyType, kind: "InputStmt", prompt };
 }
 
-export function timeCall(funcCall, timeValue) {
-  return { type: voidType, kind: "TimeCall", funcCall, timeValue };
+export function timeCall(id, timeValue) {
+  return { type: voidType, kind: "TimeCall", id, timeValue };
 }
 
 export function globalRange(range, timestep = null) {

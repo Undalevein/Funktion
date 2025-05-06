@@ -32,7 +32,7 @@ Funktion {
                  | StepCall
                  | InputStmt
   PrintStmt      = "print" "(" (TimeCall | CondExpr) ")"
-  TimeCall       = FuncCall ":" num
+  TimeCall       = id ":" num
   StepCall       =  (FuncCall | FunctionGroup) "." "step" "(" num? ")"
   InputStmt      = "input" "(" stringliteral? ")"
 

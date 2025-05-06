@@ -100,7 +100,7 @@ export default function analyze(match) {
       const originalContext = context;
       context = context.newChildContext();
       context.add(param.sourceString, {
-        kind: "Parameter",
+        kind: "MutableRange",
         type: core.numberType,
         name: param.sourceString,
       });
@@ -121,6 +121,11 @@ export default function analyze(match) {
         kind: "Function",
         type: core.functionType,
         name: functionId,
+      });
+      context.add(param.sourceString, {
+        kind: "MutableRange",
+        type: core.numberType,
+        name: param.sourceString,
       });
       const func = core.funcDef(
         id.sourceString,
@@ -282,7 +287,7 @@ export default function analyze(match) {
       // Syntax Sugar: Default step count is 1.
       return core.stepCall(
         expr.rep(),
-        stepValue.rep().length ? stepValue.rep() : 1
+        stepValue.rep().length ? stepValue.rep()[0].value : 1
       );
     },
 
@@ -293,8 +298,8 @@ export default function analyze(match) {
       return core.inputStmt(prompt?.rep());
     },
 
-    TimeCall(funcCall, _colon, timeValue) {
-      return core.timeCall(funcCall.rep(), timeValue.rep());
+    TimeCall(id, _colon, timeValue) {
+      return core.timeCall(id.rep(), timeValue.rep());
     },
 
     GlobalRange(range, timestep) {
@@ -317,11 +322,10 @@ export default function analyze(match) {
       return core.timestep(value.rep());
     },
 
-    num(sign, value, period, decimal) {
+    num(sign, value, _period, decimal) {
       const number = Number(
         sign.sourceString +
           value.sourceString +
-          period.sourceString +
           decimal.sourceString
       );
       return core.num(number);
@@ -336,10 +340,9 @@ export default function analyze(match) {
     },
 
     id(firstChar, name) {
-      const entity = context.lookup(
-        firstChar.sourceString + name?.sourceString
-      );
-      mustHaveBeenFound(entity, name.sourceString, { at: name });
+      const idName = firstChar.sourceString + name?.sourceString;
+      const entity = context.lookup(idName);
+      mustHaveBeenFound(entity, idName, { at: name });
       return core.id(firstChar.sourceString + name?.sourceString);
     },
 
