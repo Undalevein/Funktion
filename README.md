@@ -163,17 +163,6 @@ If a local scope exceeds the bounds of a given global scope, the program will le
 - `print(f(x):2)` - Prints the output of the function until 2.
 
 In Funktion, any time a function is called with `.step()`, the function will generate the next output over the given time step, moving forward from the first step to also generate the next step when initially called. By default, `.step()` will step one defined time step. If the time step is defined as 2, it will step through the input value by 2. If a function with a time step of 2 calls itself with `.step(2)`, it will step twice, generating twice, stepping through the input value by 4. The local defined time step takes precedence over the global time step for all functions in the given program, which is 1 by default if not defined at the start of the program. The step value need not align with the global or even local time step, but the function will end generation once the end value is either reached or passed.
-
-A function's generated outputs are influenced by any additional operations or mutations applied to it when stepped through. This mutation is shared between the functions involved for a given number of steps.
-
-For example, consider the expression:
-
-```funktion
-{G(x) + f(x)}.step(2)
-```
-
-This will step through both `G` and `f` by `x`'s step value, while also making their output for that iteration the sum of their results for two generations.
-
 ---
 
 ### Chain of Questioning
