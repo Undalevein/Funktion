@@ -1,5 +1,5 @@
 `1..9` t3t
 
-f(x) = x ; x + 1 ; x + 2
+f(x) = x \ x + 1 \ x + 2
 f(x).step(2)
 print(x:7)
