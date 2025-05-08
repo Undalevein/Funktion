@@ -99,14 +99,14 @@ export default function generate(program) {
         }
       `);
       p.statements.forEach(gen);
-      output.push(`rl.close()`);
+      output.push(`rl.close();`);
       output.unshift(...inputCode);
     },
 
     FuncDef(d) {
       const funcName = targetName(d.name);
       const param = targetName(d.param);
-      const body = gen(d.body);
+      // const body = gen(d.body);
 
       // check for slices in the body of the function
       if (d.body.kind === "SliceExpr") {
@@ -215,13 +215,13 @@ export default function generate(program) {
       return `${gen(e.id)}.values.slice(0, ${gen(e.timeValue)})`;
     },
 
-    // InputStmt(e) {
-    //   inputCode.push(`
-    //     console.log(${gen(e.prompt[0])});
-    //     const inputVar__${inputIndex} = await rl.question("Input: ");
-    //   `);
-    //   return `inputVar__${inputIndex++}`
-    // },
+    InputStmt(e) {
+      inputCode.push(`
+        console.log(${gen(e.prompt[0])});
+        const inputVar__${inputIndex} = await rl.question("Input: ");
+      `);
+      return `inputVar__${inputIndex++}`
+    },
 
     num(n) {
       return n.value;

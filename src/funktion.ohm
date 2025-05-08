@@ -1,5 +1,5 @@
 Funktion {
-  Program        = (GlobalRange "\n")? "\n"* ListOf<(Statement | FuncDef | ""), ("\n"+ | space+)>
+  Program        = "\n"* (GlobalRange "\n")? "\n"* ListOf<(Statement | FuncDef | ""), ("\n"+ | space+)>
 
   FuncDef        = id "(" id ")" "=" "\n"? SliceExpr (";" (FuncDef | SliceExpr))*
   FuncCall		   = id "(" Expr ")"
@@ -66,5 +66,5 @@ Funktion {
   keyword        = input | print | step
 
   space         := ~"\n" "\x00".."\x20" 
-                 | "//" (~"\n" any)*  ("\n" | end)                 -- comment
+                 | "//" (~"\n" any)*                 -- comment
 }

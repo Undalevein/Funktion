@@ -74,7 +74,7 @@ export default function analyze(match) {
   }
 
   const builder = match.matcher.grammar.createSemantics().addOperation("rep", {
-    Program(globalRanges, _newLines, _moreNewlines, statements) {
+    Program(_newLines, globalRanges, _newLines1, _moreNewlines, statements) {
       return core.program(
         globalRanges.rep().length ? globalRanges.rep() : null,
         statements.asIteration().children.map((statement) => statement?.rep())
