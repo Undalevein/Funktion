@@ -123,12 +123,16 @@ Ranges are the building blocks of Funktion programming. They allow programmers t
 
 These types of ranges will not stop until some goal condition is met. For example, a function with an infinite numerical range may end if the program will print on the first input value for the function that is divisible by 152, for instance. However, these types of functions will prematurely end if they reach or pass the bounds of the globally-defined range, if it is defined.
 
+NOT IMPLEMENTED YET
+
 ##### Character Ranges
 
 - `` `'a'..'e'` `` → `a b c d e`
 - `` `'y'..'t'` `` → `y x w v u t`
 - `` `'a'..'h' t2t` `` → `a c e g`
 - `` `'Y'..'c'` `` → `` Y Z [ \ ] ^ _ ` a b c ``
+
+NOT IMPLEMENTED YET
 
 #### Range Scoping
 
@@ -160,7 +164,7 @@ If a local scope exceeds the bounds of a given global scope, the program will le
 #### Calling Functions
 
 - `f(x).step(3)` - Calls the function 3 times.
-- `print(f(x):2)` - Prints the output of the function until 2.
+- `print(x:2)` - Prints the output of the function until 2.
 
 In Funktion, any time a function is called with `.step()`, the function will generate the next output over the given time step, moving forward from the first step to also generate the next step when initially called. By default, `.step()` will step one defined time step. If the time step is defined as 2, it will step through the input value by 2. If a function with a time step of 2 calls itself with `.step(2)`, it will step twice, generating twice, stepping through the input value by 4. The local defined time step takes precedence over the global time step for all functions in the given program, which is 1 by default if not defined at the start of the program. The step value need not align with the global or even local time step, but the function will end generation once the end value is either reached or passed.
 ---
@@ -227,17 +231,17 @@ Program below prints the factorial of 5, which will output `120` after iterating
 
 factorial(x) = ? x > 1 => x * factorial(x - 1) : 1 
 
-factorial(x).step(5)
-print(x:5)
+factorial(x).step(5)  // Step through 5 times
+print(x:1)
 ```
 
 **Output:**
 
 ```
-5
-20
-60
-120
+1
+2
+6
+24
 120
 ```
 
@@ -250,13 +254,16 @@ print(x:5)
 
 f(x) = x
 f(x).step(2)
-G(x) = number(input("Give me a value and I will multiply that sequence with that value."))
+G(x) = input("Give me a value and I will multiply that sequence with that value.")
 
-(f(x) * G(x)).step(2)
-print(f(x):5)
+h(x) = f(x) * G(x)
+h(x).step(2)
+print(x:5)
 ```
 
 **Expected Output:**
+
+User Input: 5
 
 ```
 1
@@ -274,10 +281,13 @@ In this example, `f(x)` generates a sequence of numbers from 1 to 5. When combin
 `15..1` t1t
 
 fizzbuzz(x) =
-    ? x % 15 == 0 => print("fizzbuzz"), fizzbuzz(x).step()
-    ? x % 3 == 0 => print("fizz"), fizzbuzz(x).step()
-    ? x % 5 == 0 => print("buzz"), fizzbuzz(x).step()
-    : print(x), fizzbuzz(x).step()
+    ? x % 15 == 0 => "fizzbuzz":
+    ? x % 3 == 0 => "fizz":
+    ? x % 5 == 0 => "buzz":
+    x
+
+fizzbuzz(x).step(15)
+print(x)
 ```
 
 **Expected Output:**
@@ -369,50 +379,105 @@ InputStmt(_input, _open, prompt, _close) {
 ## Generated Code
 This language is also capable of generating JavaScript code!
 
+The example codes below are reformatted for readability. The generator will produce these JavaScript code, but without the nice formatting. Note that unecessary and boilerplate code are removed as well.
+
 ### Transpiled Function
-These functions will always appear in the transpiled JavaScript code regardless what file is being translated. These functions are used as Funktion has completely 
+These functions will always appear in the transpiled JavaScript code regardless what file is being translated. These functions are used as Funktion and JavaScript differ is expressiveness.
 
 ```js
-function generateRange(start, end, step) {
-  const range = [];
-  if (step === 0) step = 1;
-  if (start <= end) {
-    for (let i = start; i <= end; i += step) {
-      range.push(i);
+import { createInterface } from "node:readline/promises";
+import { stdin as input, stdout as output } from "node:process";
+const rl = createInterface({ input, output });
+
+function generateRange(start = 5, end = 1, step = 1) {
+  if (end < start) step *= -1;
+  return {
+    start,
+    end,
+    step
+  };
+}
+
+function initializeMutableRange(timestepRange = generateRange()) {
+  return {
+    timestepRange,
+    values: [],
+    index: -1,
+    size: 0
+  };
+}
+
+function getSlice(value, limit) {
+  const list = []
+  let index = 0;
+  if (value.timestepRange.step > 0) {
+    for (let i = value.timestepRange.start ; i <= limit && i <= value.timestepRange.end ; i += value.timestepRange.step ) {
+      list.push(value.values[index++]);
+    }
+  } else {
+    for (let i = value.timestepRange.start ; i >= limit && i >= value.timestepRange.end ; i += value.timestepRange.step ) {
+      list.push(value.values[index++]);
     }
   }
-  else {
-    for (let i = start; i >= end; i -= step) {
-      range.push(i);
-    }
-  }
-  return range;
+  return list;
 }
 
 function funktionPrint(value) {
   if (Array.isArray(value)) {
-    console.log(value.join('\\n'));
+    console.log(value.join('\n'));
+  }
+  else if (typeof value === "object") {
+    console.log(value.values.join('\n'));
   }
   else {
     console.log(value);
+  }
+}
+
+function applyFunction(gen, iterations, f) {
+  let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+  if (gen.size === 0) {
+    gen.size++;
+    gen.index++;
+    const result = f(currentVal);
+    gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+    currentVal += gen.timestepRange.step;
+  }
+  if (gen.timestepRange.step > 0) {
+    while (currentVal <= gen.timestepRange.end && iterations > 0) {
+      gen.size++;
+      gen.index++;
+      const result = f(currentVal);
+      gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+      currentVal += gen.timestepRange.step;
+      iterations--;
+    }
+  } else {
+    while (currentVal >= gen.timestepRange.end && iterations > 0) {
+      gen.size++;
+      gen.index++;
+      const result = f(currentVal);
+      gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+      currentVal += gen.timestepRange.step;
+      iterations--;
+    }
   }
 }
 ```
 
 ### Generated "Hello World!" Code
 ```js
-  const globalRange = [];
   funktionPrint("Hello, World!"); 
 ```
 
 ### Generated Factorial Code
+The code is reformatted for readability. The generator will produce this code, but without the nice formatting. Note that unecessary and boilerplate code are removed as well.
 ```js
-  const globalRange = generateRange(5, 1, 1);
-  const factorial_1 = [];
-  let previous_factorial_1 = 1;
-  for (const x of globalRange) {
-    factorial_1.push((x * previous_factorial_1));
-    previous_factorial_1 = factorial_1[factorial_1.length - 1];
-  }
-  funktionPrint(factorial_1(x));
+function factorial_1(x_2) {
+  return [( x_2 > 1 ? (x_2 * factorial_1((x_2 - 1))) : 1)]; 
+}
+
+let x_2 = initializeMutableRange();
+applyFunction(x_2, 5, factorial_1);
+funktionPrint(getSlice(x_2, 1));
 ```
