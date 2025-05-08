@@ -446,9 +446,10 @@ print("Hello, World!")</code></pre>
                     <p>Program below prints the factorial of 5, which will output <code>120</code> after iterating through each product. This is created using a method that outputs the answer using a recursive algorithm.</p>
                     <pre><code>`5..1` t1t
 
-factorial(x) = x * factorial(x).step()
+factorial(x) = ? x > 1 => x * factorial(x - 1) : 1 
 
-print(factorial(x):1)</code></pre>
+factorial(x).step(5)
+print(x:5)</code></pre>
                     <div class="output">
                         <div class="output-title">Output:</div>
                         <pre>5

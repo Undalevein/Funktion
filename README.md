@@ -236,9 +236,10 @@ Program below prints the factorial of 5, which will output `120` after iterating
 ```funktion
 `5..1` t1t
 
-factorial(x) = x * factorial(x).step()
+factorial(x) = ? x > 1 => x * factorial(x - 1) : 1 
 
-print(factorial(x):1)
+factorial(x).step(5)
+print(x:5)
 ```
 
 **Output:**
