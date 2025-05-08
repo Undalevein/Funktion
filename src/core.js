@@ -21,6 +21,10 @@ export function expr(condExpr, rest = []) {
   return { type: condExpr.type, kind: "Expr", condExpr, rest };
 }
 
+export function sliceExpr(expressions) {
+  return { type: expressions[0].type, kind: "SliceExpr", expressions };
+}
+
 export function condExpr(leftCond, op, rightCond, thenBranch, elseBranch) {
   return {
     type: thenBranch?.type ?? anyType,

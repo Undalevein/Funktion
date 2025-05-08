@@ -70,14 +70,16 @@ export default function generate(program) {
           if (gen.size === 0) {
             gen.size++;
             gen.index++;
-            gen.values.push(f(currentVal));
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
             currentVal += gen.timestepRange.step;
           }
           if (gen.timestepRange.step > 0) {
             while (currentVal <= gen.timestepRange.end && iterations > 0) {
               gen.size++;
               gen.index++;
-              gen.values.push(f(currentVal));
+              const result = f(currentVal);
+              gen.values.push(Array.isArray(result) ? result.join(' ') : result);
               currentVal += gen.timestepRange.step;
               iterations--;
             }
@@ -85,7 +87,8 @@ export default function generate(program) {
             while (currentVal >= gen.timestepRange.end && iterations > 0) {
               gen.size++;
               gen.index++;
-              gen.values.push(f(currentVal));
+              const result = f(currentVal);
+              gen.values.push(Array.isArray(result) ? result.join(' ') : result);
               currentVal += gen.timestepRange.step;
               iterations--;
             }
@@ -102,8 +105,21 @@ export default function generate(program) {
       const funcName = targetName(d.name);
       const param = targetName(d.param);
       const body = gen(d.body);
-      const lastStmt = body.pop();
-      output.push(`function ${funcName}(${param}) {\n${body}\nreturn ${lastStmt};\n} `);
+
+      // check for slices in the body of the function
+      if (d.body.kind === "SliceExpr") {
+        const sliceExpressions = d.body.expressions.map(expr => {
+          return `${gen(expr)}`;
+        }).join(", ");
+
+        output.push(`function ${funcName}(${param}) {
+          return [${sliceExpressions}];
+        }`);
+      } else {
+        // handle same as before if not a slice
+        const lastStmt = body.pop();
+        output.push(`function ${funcName}(${param}) {\n${body}\nreturn ${lastStmt};\n} `);
+      }
       if (!instantiatedMutableRanges.has(param)) {
         output.push(`let ${param} = initializeMutableRange();`);
         instantiatedMutableRanges.add(param)
@@ -127,6 +143,13 @@ export default function generate(program) {
         exprs.push(gen(expr));
       }
       return exprs;
+    },
+
+    //anywhere you see SliceExpr in the code, I added it in  ~MS
+    SliceExpr(e) {
+      const slices = e.expressions.map(gen);
+      // join slices with spaces in output
+      return `[${slices.join(', ')}]`;
     },
 
     CondExpr(e) {

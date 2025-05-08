@@ -1,9 +1,10 @@
 Funktion {
   Program        = (GlobalRange "\n")? "\n"* ListOf<(Statement | FuncDef | ""), ("\n"+ | space+)>
 
-  FuncDef        = id "(" id ")" "=" "\n"? Expr (";" (FuncDef | Expr))*
+  FuncDef        = id "(" id ")" "=" "\n"? SliceExpr (";" (FuncDef | SliceExpr))*
   FuncCall		   = id "(" Expr ")"
   Expr           = CondExpr ("," "\n"? CondExpr)*
+  SliceExpr      = Expr ("\\" Expr)*
   CondExpr       = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") CondExpr "=>" BitwiseExpr ":" "\n"? CondExpr --ternary
                  | BitwiseExpr
   BitwiseExpr    = BitwiseExpr ("&" | "|" | "^") ShiftExpr              --binary

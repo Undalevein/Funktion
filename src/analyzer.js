@@ -151,6 +151,14 @@ export default function analyze(match) {
       );
     },
 
+    SliceExpr(expr, _backslash, rest) {
+      const expressions = [expr.rep()];
+      if (rest.children.length > 0) {
+        expressions.push(...rest.children.map(child => child.rep()));
+      }
+      return core.sliceExpr(expressions);
+    },
+
     CondExpr_ternary(
       _question,
       condLeft,
