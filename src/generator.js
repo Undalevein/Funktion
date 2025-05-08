@@ -1,5 +1,3 @@
-import { voidType, numberType, stringType, functionType, standardLibrary } from "./core.js";
-
 export default function generate(program) {
   const inputCode = [];
   let inputIndex = 0;
@@ -33,8 +31,7 @@ export default function generate(program) {
       const timestep = p.globalRange?.[0]?.timestep?.[0];
       const start = range ? gen(range.start) : 1;
       const end = range ? gen(range.end[0]) : 5;
-      const step = timestep ? gen(timestep.value) :
-        start <= end ? 1 : -1;
+      const step = timestep ? gen(timestep.value) : 1;
       inputCode.push(`
         import { createInterface } from "node:readline/promises";
         import { stdin as input, stdout as output } from "node:process";
@@ -195,7 +192,7 @@ export default function generate(program) {
       if (e.right) {
         const left = gen(e.left);
         const right = gen(e.right);
-        return `(${left} ${e.op || "*"} ${right})`;
+        return `(${left} ${e.op} ${right})`;
       }
       return gen(e.left);
     },

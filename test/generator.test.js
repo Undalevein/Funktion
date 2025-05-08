@@ -1040,7 +1040,222 @@ const fixtures = [
       funktionPrint(x_2.values.slice(0, 7));
       rl.close()
     `)
-  }
+  },
+  {
+    name: "reverse range step",
+    source: 
+    `\`5..1\` t1t
+    print(1)`,
+    expected: dedent(`
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 5, end = 1, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
+        }
+      }
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        }
+      }
+      funktionPrint(1);
+      rl.close()
+    `)
+  },
+  {
+    name: "equality operators",
+    source: `print(? 1 == 1 => "yes" : "no")`,
+    expected: dedent(`
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
+        }
+      }
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        }
+      }
+      funktionPrint(( 1 === 1 ? "yes" : "no"));
+      rl.close()
+    `)
+  },
+  {
+    name: "inequality operator",
+    source: `print(? 1 != 2 => "yes" : "no")`, 
+    expected: dedent(`
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
+        }
+      }
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        }
+      }
+      funktionPrint(( 1 !== 2 ? "yes" : "no"));
+      rl.close()
+    `)
+  },
 ];
 
 describe("The code generator", () => {

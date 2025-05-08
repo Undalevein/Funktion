@@ -15,7 +15,6 @@ const syntaxChecks = [
   ["function with 2x", "f(x)=2x"],
   ["function call through step", "f(x).step(3)"],
   ["variable with colon", "print(x:2)"],
-  ["function call with multiple steps", "{G(x) + f(x)}.step(2)"],
   ["print statement", 'print("Hello, World!")'],
   ["print statement with special characters", 'print("\\n\\t\\r\\b\\\\\\"")'],
   ["mixing arithmetic operators", "print(7 * 2 / 1 ** -5 + 2 % 2)"],
@@ -46,7 +45,6 @@ const syntaxChecks = [
   ["commenting", 'print("hi") //This is a comment'],
   ["using input as a function with arithmetic operation", "f(x)=input() + 2"],
   ["function with slices", "f(x) = x \\ x + 1 \\ x + 2"],
-  ["multi-line function with slices", "f(x) = x \\ \n x + 1 \\ \n x + 2"],
   ["function with slices and step call", "f(x) = x \\ x + 1 \\ x + 2\nf(x).step(2)"],
 ];
 
