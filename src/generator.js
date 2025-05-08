@@ -56,10 +56,25 @@ export default function generate(program) {
           };
         }
 
+        function getSlice(value, limit) {
+          const list = []
+          let index = 0;
+          if (value.timestepRange.step > 0) {
+            for (let i = value.timestepRange.start ; i <= limit && i <= value.timestepRange.end ; i += value.timestepRange.step ) {
+              list.push(value.values[index++]);
+            }
+          } else {
+            for (let i = value.timestepRange.start ; i >= limit && i >= value.timestepRange.end ; i += value.timestepRange.step ) {
+              list.push(value.values[index++]);
+            }
+          }
+          return list;
+        }
+
         function funktionPrint(value) {
           if (Array.isArray(value)) {
             console.log(value.join('\\n'));
-          } 
+          }
           else if (typeof value === "object") {
             console.log(value.values.join('\\n'));
           }
@@ -212,7 +227,7 @@ export default function generate(program) {
     },
 
     TimeCall(e) {
-      return `${gen(e.id)}.values.slice(0, ${gen(e.timeValue)})`;
+      return `getSlice(${gen(e.id)}, ${gen(e.timeValue)})`;
     },
 
     InputStmt(e) {
