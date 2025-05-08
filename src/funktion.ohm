@@ -1,7 +1,7 @@
 Funktion {
   Program        = (GlobalRange "\n")? "\n"* ListOf<(Statement | FuncDef | ""), ("\n"+ | space+)>
 
-  FuncDef        = id "(" id ")" "=" "\n"? Expr (";" (FuncDef | Expr))*
+  FuncDef        = id "(" id ")" "=" "\n"? Expr (";" Expr)*
   FuncCall		   = id "(" Expr ")"
   Expr           = CondExpr ("," "\n"? CondExpr)*
   CondExpr       = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") CondExpr "=>" BitwiseExpr ":" "\n"? CondExpr --ternary

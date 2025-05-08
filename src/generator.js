@@ -98,7 +98,6 @@ export default function generate(program) {
     },
 
     FuncDef(d) {
-      console.log(d)
       const funcName = targetName(d.name);
       const param = targetName(d.param);
       const body = gen(d.body);

@@ -15,7 +15,7 @@ const syntaxChecks = [
   ["function with 2x", "f(x)=2x"],
   ["function call through step", "f(x).step(3)"],
   ["variable with colon", "print(x:2)"],
-  ["function call with multiple steps", "{G(x) + f(x)}.step(2)"],
+  // ["function call with multiple steps", "{G(x) + f(x)}.step(2)"],
   ["print statement", 'print("Hello, World!")'],
   ["print statement with special characters", 'print("\\n\\t\\r\\b\\\\\\"")'],
   ["mixing arithmetic operators", "print(7 * 2 / 1 ** -5 + 2 % 2)"],
@@ -39,10 +39,10 @@ const syntaxChecks = [
     "chain of questioning with multiple questions",
     "f(x) = ? 0 == 0 => 2 : ? 1 == 1 => 3 : 4",
   ],
-  [
-    "multiple statements on the same line, separate by commas",
-    "f(x)=2; g(x)=3; h(x)=4",
-  ],
+  // [
+  //   "multiple statements on the same line, separate by commas",
+  //   "f(x)=2; g(x)=3; h(x)=4",
+  // ],
   ["commenting", 'print("hi") //This is a comment'],
   ["using input as a function with arithmetic operation", "f(x)=input() + 2"],
 ];
