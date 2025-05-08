@@ -463,6 +463,49 @@ const fixtures = [
     const globalRange = [];
     funktionPrint("a");
     `),
+  },
+  {
+    name: "slices",
+    source: 
+    "`1..9` t3t\n" +
+    "f(x) = x \\ x + 1 \\ x + 2\n" +
+    "f(x).step(2)\n" +
+    "print(x:7)",
+    expected: dedent(`
+      function generateRange(start, end, step) {
+        const range = [];
+        if (step === 0) step = 1;
+        if (start <= end) {
+          for (let i = start; i <= end; i += step) {
+            range.push(i);
+          }
+        }
+        else {
+          for (let i = start; i >= end; i -= step) {
+            range.push(i);
+          }
+        }
+        return range;
+      }
+  
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        }
+        else {
+          console.log(value);
+        }
+      }
+      
+      const globalRange = generateRange(1, 9, 3);
+      function f_1(x_1) {
+        return [x_1, (x_1 + 1), (x_1 + 2)].join(' ');
+      }
+      let x_1 = initializeMutableRange(globalRange);
+      
+      applyFunction(x_1, 2, f_1);
+      funktionPrint(x_1.values.slice(0, 3));
+    `)
   }
 ];
 

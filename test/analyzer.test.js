@@ -59,6 +59,9 @@ const semanticChecks = [
   ["character literals", "f(x)='2'"],
   ["parentheses around a primary", "f(x)=(3)"],
   ["complicated equation", "f(x) = 1 + (2 + -3) << -4 >> (19 * 39) % x ^ 2 << 38 & 18"],
+  ["function with slices", "f(x) = x \\ x + 1 \\ x + 2"],
+  ["function with slices of different types", "f(x) = x \\ 'a' \\ x + 2"],
+  ["printing sliced function result", "f(x) = x \\ x + 1 \\ x + 2\nprint(f(x))"],
 ];
 
 // Programs that are syntactically correct but have semantic errors

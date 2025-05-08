@@ -45,6 +45,9 @@ const syntaxChecks = [
   ],
   ["commenting", 'print("hi") //This is a comment'],
   ["using input as a function with arithmetic operation", "f(x)=input() + 2"],
+  ["function with slices", "f(x) = x \\ x + 1 \\ x + 2"],
+  ["multi-line function with slices", "f(x) = x \\ \n x + 1 \\ \n x + 2"],
+  ["function with slices and step call", "f(x) = x \\ x + 1 \\ x + 2\nf(x).step(2)"],
 ];
 
 // Programs with syntax errors that the parser will detect
