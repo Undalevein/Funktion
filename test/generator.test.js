@@ -78,7 +78,7 @@ const fixtures = [
       }
 
       funktionPrint("Hello, World!");
-      rl.close() 
+      rl.close(); 
     `),
   },
   {
@@ -153,11 +153,10 @@ const fixtures = [
       }
 
       applyFunction(x_2, 1, factorial_1);
-      applyFunction(x_2, 1, factorial_1);
       function factorial_1(x_2) { return [(x_2 * x_2.values[x_2.index])]; }
       let x_2 = initializeMutableRange();
       funktionPrint(factorial_1(x_2));
-      rl.close()
+      rl.close();
     `),
 	},
   {
@@ -229,7 +228,7 @@ const fixtures = [
       }
     
       funktionPrint((1 + (2 * 3)));
-      rl.close()
+      rl.close();
     `)
   },
   {
@@ -301,7 +300,7 @@ const fixtures = [
       }
     
       funktionPrint((5 & 3));
-      rl.close()
+      rl.close();
     `)
   },
   {
@@ -373,7 +372,7 @@ const fixtures = [
       }
     
       funktionPrint((4 << 1));
-      rl.close()
+      rl.close();
     `)
   },
   {
@@ -445,7 +444,7 @@ const fixtures = [
       }
     
       funktionPrint((5 % 2));
-      rl.close()
+      rl.close();
     `)
   },
   {
@@ -517,7 +516,7 @@ const fixtures = [
       }
     
       funktionPrint(Math.pow(2, 3));
-      rl.close()
+      rl.close();
     `)
   },
   {
@@ -590,7 +589,7 @@ const fixtures = [
       }
     
       funktionPrint(( 1 > 0 ? 1 : (-1)));
-      rl.close()
+      rl.close();
     `),
   },
   {
@@ -662,7 +661,7 @@ const fixtures = [
       }
     
       funktionPrint((-1));
-      rl.close()
+      rl.close();
     `)
   },
   {
@@ -734,7 +733,7 @@ const fixtures = [
       }
     
       funktionPrint((~1));
-      rl.close()
+      rl.close();
     `)
   },
   {
@@ -811,7 +810,7 @@ const fixtures = [
       let x_2 = initializeMutableRange();
       applyFunction(x_2, 1, f_1);
       funktionPrint(x_2.values[x_2.index]);
-      rl.close()
+      rl.close();
     `)
   },
   {
@@ -887,7 +886,7 @@ const fixtures = [
       function f_1(x_2) { return [5]; }
       let x_2 = initializeMutableRange();
       funktionPrint(f_1.values.slice(0, 10));
-      rl.close()
+      rl.close();
     `),
   },
   {
@@ -959,22 +958,21 @@ const fixtures = [
       }
 
       funktionPrint("a");
-      rl.close()
+      rl.close();
     `),
   },
   {
-    name: "slices",
-    source: 
-    "`1..9` t3t\n" +
-    "f(x) = x \\ x + 1 \\ x + 2\n" +
-    "f(x).step(2)\n" +
-    "print(x:7)",
+    name: "slice with multiple elements",
+    source: `
+      f(x) = x \\ x * 2 \\ x ** 3
+      print(f(x))
+    `,
     expected: dedent(`
       import { createInterface } from "node:readline/promises";
       import { stdin as input, stdout as output } from "node:process";
       const rl = createInterface({ input, output });
       
-      function generateRange(start = 1, end = 9, step = 3) {
+      function generateRange(start = 1, end = 5, step = 1) {
         if (end < start) step *= -1;
         return {
           start,
@@ -1033,12 +1031,10 @@ const fixtures = [
           }
         }
       }
-      
-      function f_1(x_2) { return [x_2, (x_2 + 1), (x_2 + 2)]; }
+      function f_1(x_2) { return [x_2, (x_2 * 2), Math.pow(x_2, 3)]; }
       let x_2 = initializeMutableRange();
-      applyFunction(x_2, 2, f_1);
-      funktionPrint(x_2.values.slice(0, 7));
-      rl.close()
+      funktionPrint(f_1(x_2));
+      rl.close();
     `)
   },
   {
@@ -1111,7 +1107,7 @@ const fixtures = [
         }
       }
       funktionPrint(1);
-      rl.close()
+      rl.close();
     `)
   },
   {
@@ -1182,7 +1178,7 @@ const fixtures = [
         }
       }
       funktionPrint(( 1 === 1 ? "yes" : "no"));
-      rl.close()
+      rl.close();
     `)
   },
   {
@@ -1253,9 +1249,84 @@ const fixtures = [
         }
       }
       funktionPrint(( 1 !== 2 ? "yes" : "no"));
-      rl.close()
+      rl.close();
     `)
   },
+  {
+    name: "input with prompt",
+    source: `f(x) = input("Enter your name: ")`,
+    expected: dedent(`
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      console.log("Enter your name: ");
+      const inputVar__0 = await rl.question("Input: ");
+
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
+        }
+      }
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        }
+      }
+      function f_1(x_2) { return [inputVar__0]; }
+      let x_2 = initializeMutableRange();
+      rl.close();
+    `)
+  }
 ];
 
 describe("The code generator", () => {

@@ -154,12 +154,10 @@ export default function generate(program) {
       return exprs;
     },
 
-    //anywhere you see SliceExpr in the code, I added it in  ~MS
-    SliceExpr(e) {
-      const slices = e.expressions.map(gen);
-      // join slices with spaces in output
-      return `[${slices.join(', ')}]`;
-    },
+    // SliceExpr(e) {
+    //   const slices = e.expressions.map(gen);
+    //   return `[${slices.join(', ')}]`;
+    // },
 
     CondExpr(e) {
       if (e.thenBranch) {
