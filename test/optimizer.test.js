@@ -141,6 +141,81 @@ const tests = [
     core.factor(null, "~", id("x")),
   ],
   [
+    "folds bitwise AND with constants",
+    core.bitwiseExpr(num(5), "&", num(3)),
+    num(1),
+  ],
+  [
+    "folds bitwise OR with constants",
+    core.bitwiseExpr(num(2), "|", num(8)),
+    num(10),
+  ],
+  [
+    "folds bitwise XOR with constants",
+    core.bitwiseExpr(num(6), "^", num(3)),
+    num(5),
+  ],
+  [
+    "optimizes x & 0 to 0",
+    core.bitwiseExpr(id("x"), "&", num(0)),
+    num(0),
+  ],
+  [
+    "optimizes 0 & x to 0",
+    core.bitwiseExpr(num(0), "&", id("x")),
+    num(0),
+  ],
+  [
+    "optimizes x | 0 to x",
+    core.bitwiseExpr(id("x"), "|", num(0)),
+    id("x"),
+  ],
+  [
+    "optimizes 0 | x to x",
+    core.bitwiseExpr(num(0), "|", id("x")),
+    id("x"),
+  ],
+  [
+    "optimizes x ^ 0 to x",
+    core.bitwiseExpr(id("x"), "^", num(0)),
+    id("x"),
+  ],
+  [
+    "leaves bitwise expression with variables unoptimized",
+    core.bitwiseExpr(id("a"), "&", id("b")),
+    core.bitwiseExpr(id("a"), "&", id("b")),
+  ],
+  [
+    "folds left shift with constants",
+    core.shiftExpr(num(4), "<<", num(2)),
+    num(16),
+  ],
+  [
+    "folds right shift with constants",
+    core.shiftExpr(num(16), ">>", num(2)),
+    num(4),
+  ],
+  [
+    "optimizes x << 0 to x",
+    core.shiftExpr(id("x"), "<<", num(0)),
+    id("x"),
+  ],
+  [
+    "optimizes x >> 0 to x",
+    core.shiftExpr(id("x"), ">>", num(0)),
+    id("x"),
+  ],
+  [
+    "leaves shift expression with variables unoptimized",
+    core.shiftExpr(id("a"), "<<", id("b")),
+    core.shiftExpr(id("a"), "<<", id("b")),
+  ],
+  [
+    "optimizes shift with negative numbers (JS semantics)",
+    core.shiftExpr(num(-4), ">>", num(1)),
+    num(-2), // In JS, -4 >> 1 is -2
+  ],
+  [
     "optimizes print statement expression",
     core.printStmt(add(num(2), "+", num(3))),
     core.printStmt(num(5)),
