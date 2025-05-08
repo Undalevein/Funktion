@@ -1,6 +1,8 @@
 import { voidType, numberType, stringType, functionType, standardLibrary } from "./core.js";
 
 export default function generate(program) {
+  const inputCode = [];
+  let inputIndex = 0;
   const output = [];
   const targetName = ((mapping) => {
     return (name) => {
@@ -13,9 +15,8 @@ export default function generate(program) {
 
   const gen = node => generators?.[node?.kind]?.(node) ?? node
 
-  const instantiatedMutableRanges = []
+  const instantiatedMutableRanges = new Set([]);
 
-  // let currentFunction = { name: null, param: null };
 
   const generators = {
     Program(p) {
@@ -28,6 +29,11 @@ export default function generate(program) {
       const end = range ? gen(range.end[0]) : 5;
       const step = timestep ? gen(timestep.value) :
                    start <= end ? 1 : -1;
+      inputCode.push(`
+        import { createInterface } from "node:readline/promises";
+        import { stdin as input, stdout as output } from "node:process";
+        const rl = createInterface({ input, output });
+      `);
       output.push(`
         function generateRange(start = ${start}, end = ${end}, step = ${step}) {
           if (end < start) step *= -1;
@@ -87,16 +93,20 @@ export default function generate(program) {
         }
       `);
       p.statements.forEach(gen);
+      output.push(`rl.close()`);
+      output.unshift(...inputCode);
     },
 
     FuncDef(d) {
+      console.log(d)
       const funcName = targetName(d.name);
       const param = targetName(d.param);
       const body = gen(d.body);
       const lastStmt = body.pop();
       output.push(`function ${funcName}(${param}) {\n${body}\nreturn ${lastStmt};\n} `);
-      if (instantiatedMutableRanges.indexOf(param) === -1) {
+      if (!instantiatedMutableRanges.has(param)) {
         output.push(`let ${param} = initializeMutableRange();`);
+        instantiatedMutableRanges.add(param)
       }
     },
 
@@ -105,7 +115,7 @@ export default function generate(program) {
     },
 
     StepCall(s) {
-      const expr = gen(s.expr);
+      const expr = targetName(s.expr.name);
       const stepValue = gen(s.stepValue);
       const arg = targetName(s.expr.arg);
       output.push(`applyFunction(${arg}, ${stepValue}, ${expr});`);
@@ -188,6 +198,14 @@ export default function generate(program) {
       return `${gen(e.id)}.values.slice(0, ${gen(e.timeValue)})`;
     },
 
+    InputStmt(e) {
+      inputCode.push(`
+        console.log(${gen(e.prompt[0])});
+        const inputVar__${inputIndex} = await rl.question("Input: ");
+      `);
+      return `inputVar__${inputIndex++}`
+    },
+
     num(n) {
       return n.value;
     },
@@ -205,7 +223,7 @@ export default function generate(program) {
     },
 
     FuncCall(c) {
-      return `${targetName(c.name)}`;
+      return `${targetName(c.name)}(${gen(c.arg)})`;
     }
   };
 

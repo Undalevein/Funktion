@@ -2,7 +2,7 @@ Funktion {
   Program        = (GlobalRange "\n")? "\n"* ListOf<(Statement | FuncDef | ""), ("\n"+ | space+)>
 
   FuncDef        = id "(" id ")" "=" "\n"? Expr (";" (FuncDef | Expr))*
-  FuncCall		   = id "(" id ")"
+  FuncCall		   = id "(" Expr ")"
   Expr           = CondExpr ("," "\n"? CondExpr)*
   CondExpr       = "?" CondExpr ("==" | "!=" | "<=" | "<" | ">=" | ">") CondExpr "=>" BitwiseExpr ":" "\n"? CondExpr --ternary
                  | BitwiseExpr
@@ -33,7 +33,8 @@ Funktion {
                  | InputStmt
   PrintStmt      = "print" "(" (TimeCall | CondExpr) ")"
   TimeCall       = id ":" num
-  StepCall       =  (FuncCall | FunctionGroup) "." "step" "(" num? ")"
+  StepCall       =  id "(" id ")" "." "step" "(" num? ")"
+  StepCallMulti  = FunctionGroup "." "step" "(" num? ")"
   InputStmt      = "input" "(" stringliteral? ")"
 
   GlobalRange    = range timestep?

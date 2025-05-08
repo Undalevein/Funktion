@@ -17,9 +17,9 @@ export function funcCall(name, arg) {
   return { type: anyType, kind: "FuncCall", name, arg };
 }
 
-export function functionGroup(expr) {
-  return { type: expr.type, kind: "FunctionGroup", expr };
-}
+// export function functionGroup(expr) {
+//   return { type: expr.type, kind: "FunctionGroup", expr };
+// }
 
 export function expr(condExpr, rest = []) {
   return { type: condExpr.type, kind: "Expr", condExpr, rest };

@@ -25,7 +25,8 @@ class Context {
   }
 
   newChildContext(props) {
-    return new Context({ ...this, ...props, parent: this, locals: new Map() });
+    
+    return new Context({ ...this, ...props, parent: this, locals: this.locals });
   }
 }
 
@@ -86,9 +87,9 @@ export default function analyze(match) {
 
     FuncDef(
       id,
-      open,
+      _open,
       param,
-      close,
+      _close,
       _eq,
       _newLine,
       body,
@@ -99,16 +100,17 @@ export default function analyze(match) {
       // Temporary check inside the function.
       const originalContext = context;
       context = context.newChildContext();
+      context.add(id.sourceString, {
+        kind: "Function",
+        type: core.functionType,
+        name: id.sourceString,
+      });
       context.add(param.sourceString, {
         kind: "MutableRange",
         type: core.numberType,
         name: param.sourceString,
       });
-      const functionId =
-        id.sourceString +
-        open.sourceString +
-        param.sourceString +
-        close.sourceString;
+      const functionId = `${id.sourceString}(${param.sourceString})`;
       context.add(functionId, {
         kind: "Function",
         type: core.functionType,
@@ -117,7 +119,7 @@ export default function analyze(match) {
       const analyzedBody = body?.rep();
       // Checks outside of the function definition.
       context = originalContext;
-      context.add(functionId, {
+      context.add(id.sourceString, {
         kind: "Function",
         type: core.functionType,
         name: functionId,
@@ -136,20 +138,15 @@ export default function analyze(match) {
       return func;
     },
 
-    FuncCall(id, open, arg, close) {
-      const functionId =
-        id.sourceString +
-        open.sourceString +
-        arg.sourceString +
-        close.sourceString;
-      const func = context.lookup(functionId);
+    FuncCall(id, _open, arg, _close) {
+      const func = context.lookup(id.sourceString);
       mustHaveBeenFound(func, id.sourceString, { at: id });
-      return core.funcCall(id.sourceString, arg.sourceString);
+      return core.funcCall(id.sourceString, arg.rep());
     },
 
-    FunctionGroup(_open, expr, _close) {
-      return core.functionGroup(expr.rep());
-    },
+    // FunctionGroup(_open, expr, _close) {
+    //   return core.functionGroup(expr.rep());
+    // },
 
     Expr(condExpr, _sep, _newLine, rest) {
       return core.expr(
@@ -239,7 +236,7 @@ export default function analyze(match) {
 
     MulExpr_mul(left, right) {
       const l = left.rep();
-      const r = right.sourceString;
+      const r = right.rep();
       return core.mulExpr(l, "*", r);
     },
 
@@ -283,10 +280,10 @@ export default function analyze(match) {
       return core.printStmt(expr.rep());
     },
 
-    StepCall(expr, _dot, _step, _open, stepValue, _close) {
+    StepCall(id, _open, arg, _close, _dot, _step, _open1, stepValue, _close1) {
       // Syntax Sugar: Default step count is 1.
       return core.stepCall(
-        expr.rep(),
+        {name: id.sourceString, arg: arg.sourceString},
         stepValue.rep().length ? stepValue.rep()[0].value : 1
       );
     },
@@ -325,8 +322,8 @@ export default function analyze(match) {
     num(sign, value, _period, decimal) {
       const number = Number(
         sign.sourceString +
-          value.sourceString +
-          decimal.sourceString
+        value.sourceString +
+        decimal.sourceString
       );
       return core.num(number);
     },
@@ -343,7 +340,7 @@ export default function analyze(match) {
       const idName = firstChar.sourceString + name?.sourceString;
       const entity = context.lookup(idName);
       mustHaveBeenFound(entity, idName, { at: name });
-      return core.id(firstChar.sourceString + name?.sourceString);
+      return core.id(idName);
     },
 
     _terminal(...children) {
