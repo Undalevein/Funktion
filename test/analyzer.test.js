@@ -52,13 +52,15 @@ const semanticChecks = [
   ["global range with negative integer time step", "`1..10` t-2t\n"],
   ["global range with float time step", "`1..10` t2.5t\n"],
   ["global range with character step", "`'a'..'z'`\n"],
-  // ["function group", "f(x)=x\ng(x)=x\n{f(x)+g(x)}.step()"],
   ["input statement with prompt", 'f(x)=input("Hello")'],
   ["using the function parameter", "f(x)=x*3+x"],
   ["identifiers", "f(x)=x"],
   ["character literals", "f(x)='2'"],
   ["parentheses around a primary", "f(x)=(3)"],
   ["complicated equation", "f(x) = 1 + (2 + -3) << -4 >> (19 * 39) % x ^ 2 << 38 & 18"],
+  ["function with slices", "f(x) = x \\ x + 1 \\ x + 2"],
+  ["function with slices of different types", "f(x) = x \\ 'a' \\ x + 2"],
+  ["printing sliced function result", "f(x) = x \\ x + 1 \\ x + 2\nprint(f(x))"],
 ];
 
 // Programs that are syntactically correct but have semantic errors

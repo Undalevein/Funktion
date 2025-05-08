@@ -50,14 +50,60 @@ const optimizers = {
     return e;
   },
 
+  BitwiseExpr(e) {
+    e.left = optimize(e.left);
+    e.right = optimize(e.right);
+    if (e.left.kind === 'num' && e.right.kind === 'num') {
+      let result;
+      switch (e.op) {
+        case '&': result = e.left.value & e.right.value; break;
+        case '|': result = e.left.value | e.right.value; break;
+        case '^': result = e.left.value ^ e.right.value; break;
+      }
+      return core.num(result);
+    }
+    if (e.op === '&') {
+      if ((e.left.kind === 'num' && e.left.value === 0) || 
+          (e.right.kind === 'num' && e.right.value === 0)) {
+        return core.num(0);
+      }
+    }
+    if (e.op === '|') {
+      if (e.left.kind === 'num' && e.left.value === 0) return e.right;
+      if (e.right.kind === 'num' && e.right.value === 0) return e.left;
+    }
+    if (e.op === '^' && e.right.kind === 'num' && e.right.value === 0) {
+      return e.left;
+    }
+  },
+  
+  ShiftExpr(e) {
+    if (e.op) {
+      e.left = optimize(e.left);
+      e.right = optimize(e.right);
+      if (e.left.kind === 'num' && e.right.kind === 'num') {
+        let result;
+        switch (e.op) {
+          case '<<': result = e.left.value << e.right.value; break;
+          case '>>': result = e.left.value >> e.right.value; break;
+        }
+        return core.num(result);
+      }
+      if (e.right.kind === 'num' && e.right.value === 0) {
+        return e.left;
+      }
+      return e;
+    }
+  },
+
   AddExpr(e) {
     e.left = optimize(e.left);
     e.right = optimize(e.right);
     if (e.left.kind === 'num' && e.right.kind === 'num') {
       const result = e.op === '+' 
-      ? e.left.value + e.right.value 
-      : e.left.value - e.right.value;
-    return core.num(result);
+        ? e.left.value + e.right.value 
+        : e.left.value - e.right.value;
+      return core.num(result);
     }
     if (e.op === '+') {
       if (e.left.kind === 'num' && e.left.value === 0) return e.right;
@@ -114,7 +160,7 @@ const optimizers = {
   },
 
   TimeCall(t) {
-    t.funcCall = optimize(t.funcCall);
+    t.id = optimize(t.id);
     t.timeValue = optimize(t.timeValue);
     return t;
   },

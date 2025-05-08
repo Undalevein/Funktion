@@ -144,15 +144,19 @@ export default function analyze(match) {
       return core.funcCall(id.sourceString, arg.rep());
     },
 
-    // FunctionGroup(_open, expr, _close) {
-    //   return core.functionGroup(expr.rep());
-    // },
-
     Expr(condExpr, _sep, _newLine, rest) {
       return core.expr(
         condExpr.rep(),
         rest.children.map((r) => r.rep())
       );
+    },
+
+    SliceExpr(expr, _backslash, rest) {
+      const expressions = [expr.rep()];
+      if (rest.children.length > 0) {
+        expressions.push(...rest.children.map(child => child.rep()));
+      }
+      return core.sliceExpr(expressions);
     },
 
     CondExpr_ternary(
@@ -302,10 +306,6 @@ export default function analyze(match) {
     GlobalRange(range, timestep) {
       return core.globalRange(range.rep(), timestep?.rep());
     },
-
-    // LocalRange(_open, id, _close, range, timestep) {
-    //   return core.localRange(id.sourceString, range.rep(), timestep?.rep());
-    // },
 
     numrange(_open, start, _dots, end, _close) {
       return core.numRange(start?.rep(), end?.rep());

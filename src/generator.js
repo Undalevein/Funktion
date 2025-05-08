@@ -1,5 +1,3 @@
-import { voidType, numberType, stringType, functionType, standardLibrary } from "./core.js";
-
 export default function generate(program) {
   const inputCode = [];
   let inputIndex = 0;
@@ -23,12 +21,17 @@ export default function generate(program) {
       /**
        * Standard generator code used in every file.
        */
+      this.functions = new Map();
+      p.statements.forEach(s => {
+        if (s.kind === "FuncDef") {
+          this.functions.set(s.name, s);
+        }
+      });
       const range = p.globalRange?.[0]?.range;
       const timestep = p.globalRange?.[0]?.timestep?.[0];
       const start = range ? gen(range.start) : 1;
       const end = range ? gen(range.end[0]) : 5;
-      const step = timestep ? gen(timestep.value) :
-                   start <= end ? 1 : -1;
+      const step = timestep ? gen(timestep.value) : 1;
       inputCode.push(`
         import { createInterface } from "node:readline/promises";
         import { stdin as input, stdout as output } from "node:process";
@@ -70,14 +73,16 @@ export default function generate(program) {
           if (gen.size === 0) {
             gen.size++;
             gen.index++;
-            gen.values.push(f(currentVal));
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
             currentVal += gen.timestepRange.step;
           }
           if (gen.timestepRange.step > 0) {
             while (currentVal <= gen.timestepRange.end && iterations > 0) {
               gen.size++;
               gen.index++;
-              gen.values.push(f(currentVal));
+              const result = f(currentVal);
+              gen.values.push(Array.isArray(result) ? result.join(' ') : result);
               currentVal += gen.timestepRange.step;
               iterations--;
             }
@@ -85,7 +90,8 @@ export default function generate(program) {
             while (currentVal >= gen.timestepRange.end && iterations > 0) {
               gen.size++;
               gen.index++;
-              gen.values.push(f(currentVal));
+              const result = f(currentVal);
+              gen.values.push(Array.isArray(result) ? result.join(' ') : result);
               currentVal += gen.timestepRange.step;
               iterations--;
             }
@@ -101,8 +107,12 @@ export default function generate(program) {
       const funcName = targetName(d.name);
       const param = targetName(d.param);
       const body = gen(d.body);
-      const lastStmt = body.pop();
-      output.push(`function ${funcName}(${param}) {\n${body}\nreturn ${lastStmt};\n} `);
+
+      // check for slices in the body of the function
+      if (d.body.kind === "SliceExpr") {
+        const sliceExpressions = d.body.expressions.map(expr => gen(expr)).join(", ");
+        output.push(`function ${funcName}(${param}) { return [${sliceExpressions}]; }`);
+      }
       if (!instantiatedMutableRanges.has(param)) {
         output.push(`let ${param} = initializeMutableRange();`);
         instantiatedMutableRanges.add(param)
@@ -118,6 +128,7 @@ export default function generate(program) {
       const stepValue = gen(s.stepValue);
       const arg = targetName(s.expr.arg);
       output.push(`applyFunction(${arg}, ${stepValue}, ${expr});`);
+      return `${arg}.values[${arg}.index]`;
     },
 
     Expr(e) {
@@ -126,6 +137,13 @@ export default function generate(program) {
         exprs.push(gen(expr));
       }
       return exprs;
+    },
+
+    //anywhere you see SliceExpr in the code, I added it in  ~MS
+    SliceExpr(e) {
+      const slices = e.expressions.map(gen);
+      // join slices with spaces in output
+      return `[${slices.join(', ')}]`;
     },
 
     CondExpr(e) {
@@ -173,7 +191,7 @@ export default function generate(program) {
       if (e.right) {
         const left = gen(e.left);
         const right = gen(e.right);
-        return `(${left} ${e.op || "*"} ${right})`;
+        return `(${left} ${e.op} ${right})`;
       }
       return gen(e.left);
     },
@@ -197,13 +215,13 @@ export default function generate(program) {
       return `${gen(e.id)}.values.slice(0, ${gen(e.timeValue)})`;
     },
 
-    InputStmt(e) {
-      inputCode.push(`
-        console.log(${gen(e.prompt[0])});
-        const inputVar__${inputIndex} = await rl.question("Input: ");
-      `);
-      return `inputVar__${inputIndex++}`
-    },
+    // InputStmt(e) {
+    //   inputCode.push(`
+    //     console.log(${gen(e.prompt[0])});
+    //     const inputVar__${inputIndex} = await rl.question("Input: ");
+    //   `);
+    //   return `inputVar__${inputIndex++}`
+    // },
 
     num(n) {
       return n.value;
