@@ -1,13 +1,13 @@
-// import { describe, it } from "node:test";
-// import assert from "node:assert/strict";
-// import optimize from "../src/optimizer.js";
-// import * as core from "../src/core.js";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
+import optimize from "../src/optimizer.js";
+import * as core from "../src/core.js";
 
-// const num = (value) => core.num(value);
-// const add = (left, op, right) => core.addExpr(left, op, right);
-// const mul = (left, op, right) => core.mulExpr(left, op, right);
-// const condExpr = (left, op, right, then, elseB) => core.condExpr(left, op, right, then, elseB);
-// const id = (name) => core.id(name);
+const num = (value) => core.num(value);
+const add = (left, op, right) => core.addExpr(left, op, right);
+const mul = (left, op, right) => core.mulExpr(left, op, right);
+const condExpr = (left, op, right, then, elseB) => core.condExpr(left, op, right, then, elseB);
+const id = (name) => core.id(name);
 
 const tests = [
   [
@@ -311,11 +311,11 @@ const tests = [
   ],
 ];
 
-// describe("The optimizer", () => {
-//   for (const [scenario, before, after] of tests) {
-//     it(scenario, () => {
-//       const result = optimize(before);
-//       assert.deepEqual(result, after);
-//     });
-//   }
-// });
+describe("The optimizer", () => {
+  for (const [scenario, before, after] of tests) {
+    it(scenario, () => {
+      const result = optimize(before);
+      assert.deepEqual(result, after);
+    });
+  }
+});
