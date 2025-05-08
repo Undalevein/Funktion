@@ -144,10 +144,6 @@ export default function analyze(match) {
       return core.funcCall(id.sourceString, arg.rep());
     },
 
-    // FunctionGroup(_open, expr, _close) {
-    //   return core.functionGroup(expr.rep());
-    // },
-
     Expr(condExpr, _sep, _newLine, rest) {
       return core.expr(
         condExpr.rep(),
@@ -302,10 +298,6 @@ export default function analyze(match) {
     GlobalRange(range, timestep) {
       return core.globalRange(range.rep(), timestep?.rep());
     },
-
-    // LocalRange(_open, id, _close, range, timestep) {
-    //   return core.localRange(id.sourceString, range.rep(), timestep?.rep());
-    // },
 
     numrange(_open, start, _dots, end, _close) {
       return core.numRange(start?.rep(), end?.rep());

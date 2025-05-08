@@ -17,10 +17,6 @@ export function funcCall(name, arg) {
   return { type: anyType, kind: "FuncCall", name, arg };
 }
 
-// export function functionGroup(expr) {
-//   return { type: expr.type, kind: "FunctionGroup", expr };
-// }
-
 export function expr(condExpr, rest = []) {
   return { type: condExpr.type, kind: "Expr", condExpr, rest };
 }
@@ -80,10 +76,6 @@ export function timeCall(id, timeValue) {
 export function globalRange(range, timestep = null) {
   return { type: voidType, kind: "GlobalRange", range, timestep };
 }
-
-// export function localRange(id, range, timestep = null) {
-//   return { type: voidType, kind: "LocalRange", id, range, timestep };
-// }
 
 export function numRange(start, end) {
   return { type: voidType, kind: "numRange", start, end };
