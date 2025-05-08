@@ -13,34 +13,73 @@ const fixtures = [
     name: "hello world",
     source: `print("Hello, World!")`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
 
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
-
-    const globalRange = [];
-    funktionPrint("Hello, World!"); 
-  `),
+      funktionPrint("Hello, World!");
+      rl.close() 
+    `),
   },
   {
     name: "factorial",
@@ -49,204 +88,436 @@ const fixtures = [
     factorial(x) = x * factorial(x).step()
     print(factorial(x))`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 5, end = 1, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
 
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
-
-    const globalRange = generateRange(5, 1, 1);
-    const factorial_1 = [];
-    let previous_factorial_1 = 1;
-    for (const x of globalRange) {
-      factorial_1.push((x * previous_factorial_1));
-      previous_factorial_1 = factorial_1[factorial_1.length - 1];
-    }
-    funktionPrint(factorial_1(x));
+      applyFunction(x_2, 1, factorial_1);
+      applyFunction(x_2, 1, factorial_1);
+      function factorial_1(x_2) { return [(x_2 * x_2.values[x_2.index])]; }
+      let x_2 = initializeMutableRange();
+      funktionPrint(factorial_1(x_2));
+      rl.close()
     `),
 	},
   {
     name: "simple arithmetic",
     source: `print(1 + 2 * 3)`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
-
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
     
-    const globalRange = [];
-    funktionPrint((1 + (2 * 3)));
+      funktionPrint((1 + (2 * 3)));
+      rl.close()
     `)
   },
   {
     name: "bitwise operation",
     source: `print(5 & 3)`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
-
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
     
-    const globalRange = [];
-    funktionPrint((5 & 3));
+      funktionPrint((5 & 3));
+      rl.close()
     `)
   },
   {
     name: "shift operation",
     source: `print(4 << 1)`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
-
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
     
-    const globalRange = [];
-    funktionPrint((4 << 1));
+      funktionPrint((4 << 1));
+      rl.close()
     `)
   },
   {
     name: "modulus operation",
     source: `print(5 % 2)`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
-
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
     
-    const globalRange = [];
-    funktionPrint((5 % 2));
+      funktionPrint((5 % 2));
+      rl.close()
     `)
   },
   {
     name: "exponentiation",
     source: `print(2 ** 3)`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
-
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
     
-    const globalRange = [];
-    funktionPrint(Math.pow(2, 3));
+      funktionPrint(Math.pow(2, 3));
+      rl.close()
     `)
   },
   {
@@ -254,99 +525,216 @@ const fixtures = [
     source: 
     `print(? 1 > 0 => 1 : -1)`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
-
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
     
-    const globalRange = [];
-    funktionPrint(( 1 > 0 ? 1 : (-1)));
+      funktionPrint(( 1 > 0 ? 1 : (-1)));
+      rl.close()
     `),
   },
   {
     name: "unary negation",
     source: `print(-1)`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
-
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
     
-    const globalRange = [];
-    funktionPrint((-1));
+      funktionPrint((-1));
+      rl.close()
     `)
   },
   {
     name: "bitwise negation",
     source: `print(~1)`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
-
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
     
-    const globalRange = [];
-    funktionPrint((~1));
+      funktionPrint((~1));
+      rl.close()
     `)
   },
   {
@@ -355,113 +743,223 @@ const fixtures = [
     `f(x) = x + 1
     print(f(x).step(1))`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
 
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
-
-    const globalRange = [];
-    const f_1 = [];
-    let previous_f_1 = 1;
-    for (const x of globalRange) {
-      f_1.push((x + 1));
-      previous_f_1 = f_1[f_1.length - 1];
-    }
-    funktionPrint(f_1(x)[0]);
+      function f_1(x_2) { return [(x_2 + 1)]; }
+      let x_2 = initializeMutableRange();
+      applyFunction(x_2, 1, f_1);
+      funktionPrint(x_2.values[x_2.index]);
+      rl.close()
     `)
   },
   {
     name: "time call",
     source: 
     `f(x) = 5
-    print(f(x) : 10)`,
+    print(f : 10)`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
 
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
-
-    const globalRange = [];
-    const f_1 = [];
-    let previous_f_1 = 1;
-    for (const x of globalRange) {
-      f_1.push(5);
-      previous_f_1 = f_1[f_1.length - 1];
-    }
-    funktionPrint(f_1(x));
+      function f_1(x_2) { return [5]; }
+      let x_2 = initializeMutableRange();
+      funktionPrint(f_1.values.slice(0, 10));
+      rl.close()
     `),
   },
   {
     name: "char literal",
     source: `print('a')`,
     expected: dedent(`
-    function generateRange(start, end, step) {
-      const range = [];
-      if (step === 0) step = 1;
-      if (start <= end) {
-        for (let i = start; i <= end; i += step) {
-          range.push(i);
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 5, step = 1) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
+      }
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
+      function funktionPrint(value) {
+        if (Array.isArray(value)) {
+          console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
+        }
+        else {
+          console.log(value);
         }
       }
-      else {
-        for (let i = start; i >= end; i -= step) {
-          range.push(i);
+      
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
         }
       }
-      return range;
-    }
 
-    function funktionPrint(value) {
-      if (Array.isArray(value)) {
-        console.log(value.join('\\n'));
-      }
-      else {
-        console.log(value);
-      }
-    }
-
-    const globalRange = [];
-    funktionPrint("a");
+      funktionPrint("a");
+      rl.close()
     `),
   },
   {
@@ -472,39 +970,75 @@ const fixtures = [
     "f(x).step(2)\n" +
     "print(x:7)",
     expected: dedent(`
-      function generateRange(start, end, step) {
-        const range = [];
-        if (step === 0) step = 1;
-        if (start <= end) {
-          for (let i = start; i <= end; i += step) {
-            range.push(i);
-          }
-        }
-        else {
-          for (let i = start; i >= end; i -= step) {
-            range.push(i);
-          }
-        }
-        return range;
+      import { createInterface } from "node:readline/promises";
+      import { stdin as input, stdout as output } from "node:process";
+      const rl = createInterface({ input, output });
+      
+      function generateRange(start = 1, end = 9, step = 3) {
+        if (end < start) step *= -1;
+        return {
+          start,
+          end,
+          step
+        };
       }
-  
+      
+      function initializeMutableRange(timestepRange = generateRange()) {
+        return {
+          timestepRange,
+          values: [],
+          index: -1,
+          size: 0
+        };
+      }
+      
       function funktionPrint(value) {
         if (Array.isArray(value)) {
           console.log(value.join('\\n'));
+        } 
+        else if (typeof value === "object") {
+          console.log(value.values.join('\\n'));
         }
         else {
           console.log(value);
         }
       }
       
-      const globalRange = generateRange(1, 9, 3);
-      function f_1(x_1) {
-        return [x_1, (x_1 + 1), (x_1 + 2)].join(' ');
+      function applyFunction(gen, iterations, f) {
+        let currentVal = gen.timestepRange.start + gen.timestepRange.step * (gen.index + 1);
+        if (gen.size === 0) {
+          gen.size++;
+          gen.index++;
+          const result = f(currentVal);
+          gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+          currentVal += gen.timestepRange.step;
+        }
+        if (gen.timestepRange.step > 0) {
+          while (currentVal <= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        } else {
+          while (currentVal >= gen.timestepRange.end && iterations > 0) {
+            gen.size++;
+            gen.index++;
+            const result = f(currentVal);
+            gen.values.push(Array.isArray(result) ? result.join(' ') : result);
+            currentVal += gen.timestepRange.step;
+            iterations--;
+          }
+        }
       }
-      let x_1 = initializeMutableRange(globalRange);
       
-      applyFunction(x_1, 2, f_1);
-      funktionPrint(x_1.values.slice(0, 3));
+      function f_1(x_2) { return [x_2, (x_2 + 1), (x_2 + 2)]; }
+      let x_2 = initializeMutableRange();
+      applyFunction(x_2, 2, f_1);
+      funktionPrint(x_2.values.slice(0, 7));
+      rl.close()
     `)
   }
 ];
